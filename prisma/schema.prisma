@@ -1,0 +1,69 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id             String    @id @default(uuid())
+  email          String    @unique
+  username       String    @unique
+  hashedPassword String
+  firstName      String?
+  lastName       String?
+  age            Int?
+  role           Role      @default(BASIC)
+  birthDate      DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  @@index([email])
+}
+
+model Store {
+  id             String       @id @default(uuid())
+  name           String
+  averageRating  Float
+  phoneNumber    String?
+  instagram      String?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  serviceTypes   ServiceTypes @relation(fields: [serviceTypesId], references: [id])
+  serviceTypesId String       @unique
+  serviceHours   ServiceHours @relation(fields: [serviceHoursId], references: [id])
+  serviceHoursId String       @unique
+}
+
+model ServiceTypes {
+  id       String      @id @default(uuid())
+  sitIn    StoreType[] @default([NONE])
+  takeOut  Boolean
+  delivery Boolean
+  Store    Store?
+}
+
+model ServiceHours {
+  id    String   @id @default(uuid())
+  open  DateTime
+  close DateTime
+  Store Store?
+}
+
+enum Role {
+  BASIC
+  PREMIUM
+  ADMIN
+}
+
+enum StoreType {
+  CAFE_SIT_IN
+  CAFE_TAKE_OUT
+  BAR_SIT_IN
+  NONE
+}
