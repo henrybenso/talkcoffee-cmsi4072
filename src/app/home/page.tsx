@@ -15,6 +15,9 @@ export default function Home() {
             </div>
           </Link>
         </section>
+        <div className="">
+          <Link href="/stores">stores</Link>
+        </div>
         <h1 className="p-5 shrink-0 flex place-content-center">
           <div className="text-5xl font-bold text-yellow-900">TalkCoffee</div>
         </h1>

@@ -1,13 +1,12 @@
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import { prisma } from "../db";
 
 async function main() {
   const user = await prisma.user.create({
     data: {
-      email: "bananaphone@gmail.com",
-      username: "BananaPhone",
-      hashedPassword: "HashedPassword1",
+      email: "bananaphone@gmail.com1",
+      username: "BananaPhone1",
+      hashedPassword: "HashedPassword11",
+      profilePicture: "/public/coffee_photo.jpg",
       role: "BASIC",
     },
   });

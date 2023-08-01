@@ -15,6 +15,7 @@ model User {
   email          String    @unique
   username       String    @unique
   hashedPassword String
+  profilePicture String?
   firstName      String?
   lastName       String?
   age            Int?
@@ -31,6 +32,7 @@ model Store {
   name           String
   averageRating  Float
   phoneNumber    String?
+  photos         String[]
   instagram      String?
   createdAt      DateTime     @default(now())
   updatedAt      DateTime     @updatedAt
