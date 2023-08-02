@@ -43,18 +43,30 @@ model Store {
 }
 
 model ServiceTypes {
-  id       String      @id @default(uuid())
-  sitIn    StoreType[] @default([NONE])
+  id       String       @id @default(uuid())
+  sitIn    StoreTypes[] @default([NONE])
   takeOut  Boolean
   delivery Boolean
   Store    Store?
 }
 
 model ServiceHours {
-  id    String   @id @default(uuid())
-  open  DateTime
-  close DateTime
-  Store Store?
+  id             String   @id @default(uuid())
+  mondayOpen     DateTime
+  mondayClose    DateTime
+  tuesdayOpen    DateTime
+  tuesdayClose   DateTime
+  wednesdayOpen  DateTime
+  wednesdayClose DateTime
+  thursdayOpen   DateTime
+  thursdayClose  DateTime
+  fridayOpen     DateTime
+  fridayClose    DateTime
+  saturdayOpen   DateTime
+  saturdayClose  DateTime
+  sundayOpen     DateTime
+  sundayClose    DateTime
+  Store          Store?
 }
 
 enum Role {
@@ -63,7 +75,7 @@ enum Role {
   ADMIN
 }
 
-enum StoreType {
+enum StoreTypes {
   CAFE_SIT_IN
   CAFE_TAKE_OUT
   BAR_SIT_IN
