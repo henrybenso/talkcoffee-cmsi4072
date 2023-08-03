@@ -2,7 +2,7 @@
 CREATE TYPE "Role" AS ENUM ('BASIC', 'PREMIUM', 'ADMIN');
 
 -- CreateEnum
-CREATE TYPE "StoreType" AS ENUM ('CAFE_SIT_IN', 'CAFE_TAKE_OUT', 'BAR_SIT_IN', 'NONE');
+CREATE TYPE "StoreTypes" AS ENUM ('CAFE_SIT_IN', 'CAFE_TAKE_OUT', 'BAR_SIT_IN', 'NONE');
 
 -- CreateTable
 CREATE TABLE "User" (
@@ -10,6 +10,7 @@ CREATE TABLE "User" (
     "email" TEXT NOT NULL,
     "username" TEXT NOT NULL,
     "hashedPassword" TEXT NOT NULL,
+    "avatar" TEXT,
     "firstName" TEXT,
     "lastName" TEXT,
     "age" INTEGER,
@@ -27,6 +28,8 @@ CREATE TABLE "Store" (
     "name" TEXT NOT NULL,
     "averageRating" DOUBLE PRECISION NOT NULL,
     "phoneNumber" TEXT,
+    "avatar" TEXT,
+    "photos" TEXT[],
     "instagram" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
@@ -39,7 +42,7 @@ CREATE TABLE "Store" (
 -- CreateTable
 CREATE TABLE "ServiceTypes" (
     "id" TEXT NOT NULL,
-    "sitIn" "StoreType"[] DEFAULT ARRAY['NONE']::"StoreType"[],
+    "sitIn" "StoreTypes"[] DEFAULT ARRAY['NONE']::"StoreTypes"[],
     "takeOut" BOOLEAN NOT NULL,
     "delivery" BOOLEAN NOT NULL,
 
@@ -49,8 +52,20 @@ CREATE TABLE "ServiceTypes" (
 -- CreateTable
 CREATE TABLE "ServiceHours" (
     "id" TEXT NOT NULL,
-    "open" TIMESTAMP(3) NOT NULL,
-    "close" TIMESTAMP(3) NOT NULL,
+    "mondayOpen" TIMESTAMP(3) NOT NULL,
+    "mondayClose" TIMESTAMP(3) NOT NULL,
+    "tuesdayOpen" TIMESTAMP(3) NOT NULL,
+    "tuesdayClose" TIMESTAMP(3) NOT NULL,
+    "wednesdayOpen" TIMESTAMP(3) NOT NULL,
+    "wednesdayClose" TIMESTAMP(3) NOT NULL,
+    "thursdayOpen" TIMESTAMP(3) NOT NULL,
+    "thursdayClose" TIMESTAMP(3) NOT NULL,
+    "fridayOpen" TIMESTAMP(3) NOT NULL,
+    "fridayClose" TIMESTAMP(3) NOT NULL,
+    "saturdayOpen" TIMESTAMP(3) NOT NULL,
+    "saturdayClose" TIMESTAMP(3) NOT NULL,
+    "sundayOpen" TIMESTAMP(3) NOT NULL,
+    "sundayClose" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "ServiceHours_pkey" PRIMARY KEY ("id")
 );

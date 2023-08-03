@@ -3,21 +3,29 @@ import styles from "./page.module.css";
 import Link from "next/link";
 import Layout from "../../app/layout";
 import Searchbar from "./searchbar";
+import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 
 export default function Home() {
   return (
     <Layout>
       <>
-        <section className="absolute top-0 right-0">
-          <Link href="/login">
-            <div className="p-1 px-4 flex shrink-1 max-w-xs rounded-xl shadow-lg bg-slate-100 hover:bg-slate-300 active:bg-slate-400">
-              <div className="text-base font-medium text-black">Login</div>
-            </div>
+        <section className="absolute top-0 right-0 shadow-lg">
+          <Link
+            href="/login"
+            className={buttonVariants({ variant: "outline" })}
+          >
+            Login
           </Link>
         </section>
-        <div className="">
-          <Link href="/stores">stores</Link>
-        </div>
+        <section className="">
+          <Link
+            href="/stores"
+            className={buttonVariants({ variant: "outline" })}
+          >
+            Stores
+          </Link>
+        </section>
         <h1 className="p-5 shrink-0 flex place-content-center">
           <div className="text-5xl font-bold text-yellow-900">TalkCoffee</div>
         </h1>
