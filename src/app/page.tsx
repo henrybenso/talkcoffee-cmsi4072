@@ -6,6 +6,6 @@ export const metadata: Metadata = {
   description: "A website for finding craft coffee.",
 };
 
-export default function Page() {
+export default function App() {
   return <Home />;
 }

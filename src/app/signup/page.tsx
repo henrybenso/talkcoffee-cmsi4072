@@ -1,6 +1,6 @@
 "use client";
 
-import Layout from "../../layout";
+import Layout from "../layout";
 import Link from "next/link";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -19,28 +19,37 @@ import {
 import { Input } from "@/components/ui/input";
 
 const formSchema = z.object({
+  email: z.string().email({ message: "Please provide a valid email." }),
   username: z
     .string()
     .min(2, { message: "Username must be at least 2 characters." })
     .max(50),
-  email: z.string().email({ message: "Please provide a valid email." }),
-  password: z
+  hashedPassword: z
     .string()
     .min(8, { message: "Password must be at least 8 characters." }),
 });
 
-export default function Page() {
+export default function SignUp() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      username: "",
       email: "",
-      password: "",
+      username: "",
+      hashedPassword: "",
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    const { email, username, hashedPassword } = values;
+    const res = await fetch("http://localhost:3000/api/account", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email, username, hashedPassword }),
+    });
+
+    const data = await res.json();
   }
 
   return (
@@ -52,7 +61,7 @@ export default function Page() {
         <div className="grid place-content-center">
           <section>
             <h1 className="p-5 shrink-0 flex place-content-center text-5xl font-bold text-black">
-              welcome to login
+              welcome to signup
             </h1>
           </section>
           <Form {...form}>
@@ -91,7 +100,7 @@ export default function Page() {
               />
               <FormField
                 control={form.control}
-                name="password"
+                name="hashedPassword"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Password</FormLabel>

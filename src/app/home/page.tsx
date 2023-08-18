@@ -10,13 +10,21 @@ export default function Home() {
   return (
     <Layout>
       <>
-        <section className="absolute top-0 right-0 shadow-lg">
-          <Link
-            href="/login"
-            className={buttonVariants({ variant: "outline" })}
-          >
-            Login
-          </Link>
+        <section className="">
+          <div className="absolute top-0 right-0 shadow-lg">
+            <Link
+              href="/signin"
+              className={buttonVariants({ variant: "outline" })}
+            >
+              Sign in
+            </Link>
+            <Link
+              href="/signup"
+              className={buttonVariants({ variant: "outline" })}
+            >
+              Sign up
+            </Link>
+          </div>
         </section>
         <section className="">
           <Link
@@ -33,10 +41,10 @@ export default function Home() {
           <Searchbar />
         </h2>
         <div>
-          <br />
-          <button className="p-2 shrink-0 flex rounded-xl shadow-lg bg-violet-500 hover:bg-violet-600 active:bg-violet-700 focus:outline-none focus:ring focus:ring-violet-300 ...">
-            <div className="text-base font-medium text-black">Save changes</div>
-          </button>
+          <link
+            href="https://api.mapbox.com/mapbox-gl-js/v2.8.1/mapbox-gl.css"
+            rel="stylesheet"
+          />
         </div>
       </>
     </Layout>

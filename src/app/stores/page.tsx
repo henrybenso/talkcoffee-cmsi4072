@@ -2,6 +2,8 @@ import Head from "next/head";
 import Layout from "../layout";
 import Headerinfo from "./headerinfo";
 import ImageScroller from "./imageScroller";
+import { buttonVariants } from "@/components/ui/button";
+import Link from "next/link";
 
 enum StoreType {
   CAFE_SIT_IN = "CAFE_SIT_IN",
@@ -42,14 +44,15 @@ export default function Page({
     <Layout>
       <>
         <div>
-          <Headerinfo />
-          <article>
-            <h2></h2>
-          </article>
-          <div className="">
-            <ImageScroller />
-          </div>
+          <Link
+            href="/stores/create"
+            className={buttonVariants({ variant: "outline" })}
+          >
+            Add a store
+          </Link>
         </div>
+        <div>Google Rating:</div>
+        <div>Talk Coffee Rating:</div>
       </>
     </Layout>
   );

@@ -1,14 +1,13 @@
 import Link from "next/link";
+import { buttonVariants } from "@/components/ui/button";
 
 export default function Headerinfo() {
   return (
     <>
       <section>
-        <div className="p-1 px-4  max-w-md rounded-xl shadow-lg bg-slate-100 hover:bg-slate-300 active:bg-slate-400">
-          <Link href="/" className="text-base font-medium text-black">
-            back
-          </Link>
-        </div>
+        <Link href="/" className={buttonVariants({ variant: "outline" })}>
+          back
+        </Link>
       </section>
       <section>
         <h1 className="uppercase">Banana Coffee Store</h1>
