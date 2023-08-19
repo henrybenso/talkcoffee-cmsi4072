@@ -1,6 +1,5 @@
 "use client";
-
-import Layout from "../../layout";
+// import Layout from "../../layout";
 import Link from "next/link";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -67,63 +66,63 @@ export default function CreateStore() {
 
   return (
     <>
-      <Layout>
-        <Link href="/" className={buttonVariants({ variant: "outline" })}>
-          Back
-        </Link>
-        <div className="grid place-content-center">
-          <section>
-            <h1 className="p-5 shrink-0 flex place-content-center text-5xl font-bold text-black">
-              add a store ☕
-            </h1>
-          </section>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-              <FormField
-                control={form.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Store</FormLabel>
-                    <FormControl>
-                      <Input placeholder="" {...field} />
-                    </FormControl>
-                    <FormDescription></FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="instagramHandle"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Instagram Handle</FormLabel>
-                    <FormControl>
-                      <Input placeholder="@" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="serviceTypes.delivery"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Password</FormLabel>
-                    <FormControl>
-                      <Select isMulti options={options} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <Button type="submit">Submit</Button>
-            </form>
-          </Form>
-        </div>
-      </Layout>
+      {/* <Layout> */}
+      <Link href="/" className={buttonVariants({ variant: "outline" })}>
+        Back
+      </Link>
+      <div className="grid place-content-center">
+        <section>
+          <h1 className="p-5 shrink-0 flex place-content-center text-5xl font-bold text-black">
+            add a store ☕
+          </h1>
+        </section>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Store Name</FormLabel>
+                  <FormControl>
+                    <Input placeholder="" {...field} />
+                  </FormControl>
+                  <FormDescription></FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="instagramHandle"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Instagram Handle</FormLabel>
+                  <FormControl>
+                    <Input placeholder="@" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="serviceTypes.delivery"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Store Type</FormLabel>
+                  <FormControl>
+                    <Select isMulti options={options} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <Button type="submit">Submit</Button>
+          </form>
+        </Form>
+      </div>
+      {/* </Layout> */}
     </>
   );
 }

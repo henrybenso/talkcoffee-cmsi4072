@@ -15,7 +15,7 @@ import { prisma } from "../../../../db";
 //   return NextResponse.json({ data });
 // }
 
-type User = {
+interface User {
   email: String;
   username: String;
   hashedPassword: String;

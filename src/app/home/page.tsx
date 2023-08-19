@@ -11,7 +11,7 @@ export default function Home() {
     <Layout>
       <>
         <section className="">
-          <div className="absolute top-0 right-0 shadow-lg">
+          <div className="absolute top-0 right-0">
             <Link
               href="/signin"
               className={buttonVariants({ variant: "outline" })}

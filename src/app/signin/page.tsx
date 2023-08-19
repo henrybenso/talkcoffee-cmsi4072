@@ -1,6 +1,6 @@
 "use client";
 
-import Layout from "../layout";
+// import Layout from "../layout";
 import Link from "next/link";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -38,49 +38,49 @@ export default function Login() {
 
   return (
     <>
-      <Layout>
-        <Link href="/" className={buttonVariants({ variant: "outline" })}>
-          Back
-        </Link>
-        <div className="grid place-content-center">
-          <section>
-            <h1 className="p-5 shrink-0 flex place-content-center text-5xl font-bold text-black">
-              welcome to login
-            </h1>
-          </section>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Email</FormLabel>
-                    <FormControl>
-                      <Input placeholder="" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="password"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Password</FormLabel>
-                    <FormControl>
-                      <Input type="password" placeholder="" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <Button type="submit">Submit</Button>
-            </form>
-          </Form>
-        </div>
-      </Layout>
+      {/* <Layout> */}
+      <Link href="/" className={buttonVariants({ variant: "outline" })}>
+        Back
+      </Link>
+      <div className="grid place-content-center">
+        <section>
+          <h1 className="p-5 shrink-0 flex place-content-center text-5xl font-bold text-black">
+            welcome to login
+          </h1>
+        </section>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Email</FormLabel>
+                  <FormControl>
+                    <Input placeholder="" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Password</FormLabel>
+                  <FormControl>
+                    <Input type="password" placeholder="" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <Button type="submit">Submit</Button>
+          </form>
+        </Form>
+      </div>
+      {/* </Layout> */}
     </>
   );
 }
