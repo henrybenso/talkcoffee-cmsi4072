@@ -1,83 +1,73 @@
 import { NextResponse } from "next/server";
 import { prisma } from "../../../../db";
-import { ServiceHours, ServiceTypes } from "@prisma/client";
 
 export async function GET() {
   const result = await prisma.store.findMany();
   return NextResponse.json({ result });
 }
 
-type serviceTypesa = {
+type sitInType = {
   sitIn: string[];
+};
+
+type serviceTypesType = {
+  sitIn: sitInType;
   takeOut: boolean;
   delivery: boolean;
 };
 
-type ServiceTypesUncheckedCreateWithoutStoreInput = {
-  id?: number;
-  sitIn: string[];
-  takeOut: boolean;
-  delivery: boolean;
+type serviceHoursType = {
+  mondayOpen: Date;
+  mondayClose: Date;
+  tuesdayOpen: Date;
+  tuesdayClose: Date;
+  wednesdayOpen: Date;
+  wednesdayClose: Date;
+  thursdayOpen: Date;
+  thursdayClose: Date;
+  fridayOpen: Date;
+  fridayClose: Date;
+  saturdayOpen: Date;
+  saturdayClose: Date;
+  sundayOpen: Date;
+  sundayClose: Date;
 };
+
 export async function POST(request: Request) {
   const res = await request.json();
   console.log("res: ", res);
 
-  const {
-    name,
-    averageRating,
-    instagramHandle,
-    serviceTypes,
-    serviceHours
-  }: {
-    name: string;
-    averageRating: number;
-    instagramHandle: string;
-    serviceTypes: ServiceTypes;
-    serviceHours: ServiceHours;
-  } = res;
+  // const {
+  //   name,
+  //   averageRating,
+  //   instagramHandle,
+  //   serviceTypesa,
+  //   serviceHours,
+  // }: {
+  //   name: string;
+  //   averageRating: number;
+  //   instagramHandle: string;
+  //   serviceTypes: serviceTypesType;
+  //   serviceHours: serviceHoursType;
+  // } = res;
 
   const result = await prisma.store.create({
     data: {
-      name,
-      averageRating,
-      instagramHandle,
-      serviceTypes: {
-        create: [
-          {
-            sitIn: serviceTypes.sitIn,
-            takeOut: serviceTypes.takeOut,
-            delivery: serviceTypes.delivery,
-          },
-        ],
-      },
-      serviceHours:{
-        create: [
-          {
-              mondayOpen :adf
-  mondayClose    DateTime
-  tuesdayOpen    DateTime
-  tuesdayClose   DateTime
-  wednesdayOpen  DateTime
-  wednesdayClose DateTime
-  thursdayOpen   DateTime
-  thursdayClose  DateTime
-  fridayOpen     DateTime
-  fridayClose    DateTime
-  saturdayOpen   DateTime
-  saturdayClose  DateTime
-  sundayOpen     DateTime
-  sundayClose    DateTime
-          }
-        ]
-      }
+      // name,
+      // averageRating,
+      // instagramHandle,
+      // serviceTypes: {
+      //   create: {
+      //     sitIn: {
+      //       [serviceTypesa.sitIn]
+      //     }
+      //   }
+      // },
+      ...res.body,
     },
   });
 
   return NextResponse.json({
-    name,
-    averageRating,
-    instagramHandle,
-    serviceTypes,
+    ...res.body,
   });
 }

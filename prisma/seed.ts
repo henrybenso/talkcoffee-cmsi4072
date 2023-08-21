@@ -10,6 +10,19 @@ async function main() {
       role: "BASIC",
     },
   });
+
+  const store = await prisma.store.create({
+    data: {
+      name: "banana store",
+      averageRating: 5.0,
+      instagramHandle: "bananaphone",
+      serviceTypes: {
+        create: {
+          sitIn: [StoreTypes],
+        },
+      },
+    },
+  });
 }
 
 main()
