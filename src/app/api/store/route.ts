@@ -1,17 +1,16 @@
 import { NextResponse } from "next/server";
 import { prisma } from "../../../../db";
+import { StoreTypes } from "@prisma/client";
 
 export async function GET() {
   const result = await prisma.store.findMany();
   return NextResponse.json({ result });
 }
 
-type sitInType = {
-  sitIn: string[];
-};
+type StoreTypesType = StoreTypes;
 
 type serviceTypesType = {
-  sitIn: sitInType;
+  sitIn: StoreTypesType[];
   takeOut: boolean;
   delivery: boolean;
 };
@@ -37,37 +36,55 @@ export async function POST(request: Request) {
   const res = await request.json();
   console.log("res: ", res);
 
-  // const {
-  //   name,
-  //   averageRating,
-  //   instagramHandle,
-  //   serviceTypesa,
-  //   serviceHours,
-  // }: {
-  //   name: string;
-  //   averageRating: number;
-  //   instagramHandle: string;
-  //   serviceTypes: serviceTypesType;
-  //   serviceHours: serviceHoursType;
-  // } = res;
+  const {
+    name,
+    averageRating,
+    ratingCount,
+    instagramHandle,
+    serviceTypes,
+    serviceHours,
+  }: {
+    name: string;
+    averageRating: number;
+    ratingCount: number;
+    instagramHandle: string;
+    serviceTypes: serviceTypesType;
+    serviceHours: serviceHoursType;
+  } = res;
 
   const result = await prisma.store.create({
     data: {
-      // name,
-      // averageRating,
-      // instagramHandle,
-      // serviceTypes: {
-      //   create: {
-      //     sitIn: {
-      //       [serviceTypesa.sitIn]
-      //     }
-      //   }
-      // },
-      ...res.body,
+      name,
+      averageRating,
+      ratingCount,
+      instagramHandle,
+      serviceTypes: {
+        create: {
+          sitIn: serviceTypes.sitIn,
+          takeOut: serviceTypes.takeOut,
+          delivery: serviceTypes.delivery,
+        },
+      },
+      serviceHours: {
+        create: {
+          mondayOpen: serviceHours.mondayOpen,
+          mondayClose: serviceHours.mondayClose,
+          tuesdayOpen: serviceHours.tuesdayOpen,
+          tuesdayClose: serviceHours.tuesdayClose,
+          wednesdayOpen: serviceHours.wednesdayOpen,
+          wednesdayClose: serviceHours.wednesdayClose,
+          thursdayOpen: serviceHours.thursdayOpen,
+          thursdayClose: serviceHours.thursdayClose,
+          fridayOpen: serviceHours.fridayOpen,
+          fridayClose: serviceHours.fridayClose,
+          saturdayOpen: serviceHours.saturdayOpen,
+          saturdayClose: serviceHours.saturdayClose,
+          sundayOpen: serviceHours.sundayOpen,
+          sundayClose: serviceHours.sundayClose,
+        },
+      },
     },
   });
 
-  return NextResponse.json({
-    ...res.body,
-  });
+  return NextResponse.json({});
 }
