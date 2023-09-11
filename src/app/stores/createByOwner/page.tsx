@@ -6,7 +6,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ratingOptions } from "./ratings";
 import { useForm, Controller } from "react-hook-form";
 import {
   Form,
@@ -21,13 +20,14 @@ import Select from "react-select";
 import validator from "validator";
 import { useState } from "react";
 import PhoneInput from "react-phone-number-input";
+import { timeOptions } from "../times";
 
 const dineOptions = [
   { value: "CAFE", label: "sit in" },
   { value: "BAR", label: "bar" },
 ];
 
-const hoursOptions = [{ value: new Date(), label: "Monday open" }];
+// const hoursOptions = [{ value: new Date(), label: "Monday open" }];
 const VALUES = ["CAFE", "BAR"] as const;
 const formSchema = z.object({
   name: z.string(),
@@ -132,7 +132,10 @@ export default function CreateStore() {
   return (
     <>
       <Layout>
-        <Link href="/" className={buttonVariants({ variant: "outline" })}>
+        <Link
+          href="/stores/create"
+          className={buttonVariants({ variant: "outline" })}
+        >
           Back
         </Link>
         <div>
@@ -140,14 +143,8 @@ export default function CreateStore() {
         </div>
         <div className="grid place-content-center">
           <section>
-            <div>
-              Are you are store owner? If so,
-              <Link className="ml-2" href="/stores/createByOwner">
-                <Button>Click Here!</Button>
-              </Link>
-            </div>
             <h1 className="p-5 shrink-0 flex place-content-center text-5xl font-bold text-black">
-              add a store ☕
+              add your store here ☕
             </h1>
           </section>
           <Form {...form}>
@@ -168,19 +165,6 @@ export default function CreateStore() {
               />
               <FormField
                 control={form.control}
-                name="rating"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Rating ⭐</FormLabel>
-                    <FormControl>
-                      <Select options={ratingOptions} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              {/* <FormField
-                control={form.control}
                 name="phoneNumber"
                 render={({ field }) => (
                   <FormItem>
@@ -196,7 +180,7 @@ export default function CreateStore() {
                     <FormMessage />
                   </FormItem>
                 )}
-              /> */}
+              />
               <FormField
                 control={form.control}
                 name="instagramHandle"
@@ -223,19 +207,19 @@ export default function CreateStore() {
                   </FormItem>
                 )}
               />
-              {/* <FormField
+              <FormField
                 control={form.control}
                 name="serviceHours"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Store Hours</FormLabel>
                     <FormControl>
-                      <Select isMulti options={hoursOptions} />
+                      <Select isMulti options={timeOptions} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
-              /> */}
+              />
               <Button type="submit">Submit</Button>
             </form>
           </Form>

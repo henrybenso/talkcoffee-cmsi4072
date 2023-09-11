@@ -34,9 +34,9 @@ model Store {
   averageRating   Float
   ratingCount     Int
   phoneNumber     String?
+  instagramHandle String?
   avatar          String?
   photos          String[]
-  instagramHandle String?
   createdAt       DateTime     @default(now())
   updatedAt       DateTime     @updatedAt
   serviceTypes    ServiceTypes @relation(fields: [serviceTypesId], references: [id])
@@ -46,8 +46,9 @@ model Store {
 }
 
 model ServiceTypes {
-  id       String       @id @default(uuid())
-  sitIn    StoreTypes[] @default([])
+  id       String   @id @default(uuid())
+  sitIn    Category @relation(fields: [sitInId], references: [id])
+  sitInId  String   @unique
   takeOut  Boolean
   delivery Boolean
   Store    Store?
@@ -72,6 +73,12 @@ model ServiceHours {
   Store          Store?
 }
 
+model Category {
+  id           String        @id @default(uuid())
+  type         StoreTypes
+  serviceTypes ServiceTypes?
+}
+
 enum Role {
   BASIC
   PREMIUM
@@ -79,7 +86,6 @@ enum Role {
 }
 
 enum StoreTypes {
-  CAFE_DINE_IN
-  CAFE_TAKE_OUT
-  BAR_DINE_IN
+  CAFE
+  BAR
 }

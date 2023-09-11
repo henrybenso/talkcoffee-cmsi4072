@@ -1,16 +1,27 @@
 import { NextResponse } from "next/server";
 import { prisma } from "../../../../db";
-import { StoreTypes } from "@prisma/client";
 
 export async function GET() {
   const result = await prisma.store.findMany();
   return NextResponse.json({ result });
 }
 
-type StoreTypesType = StoreTypes;
+export const StoreTypes: {
+  CAFE: "CAFE";
+  BAR: "BAR";
+} = {
+  CAFE: "CAFE",
+  BAR: "BAR",
+};
+
+export type StoreTypes = (typeof StoreTypes)[keyof typeof StoreTypes];
+
+type categoryType = {
+  type: StoreTypes;
+};
 
 type serviceTypesType = {
-  sitIn: StoreTypesType[];
+  sitIn: categoryType;
   takeOut: boolean;
   delivery: boolean;
 };
@@ -41,6 +52,8 @@ export async function POST(request: Request) {
     averageRating,
     ratingCount,
     instagramHandle,
+    avatar,
+    photos,
     serviceTypes,
     serviceHours,
   }: {
@@ -48,6 +61,8 @@ export async function POST(request: Request) {
     averageRating: number;
     ratingCount: number;
     instagramHandle: string;
+    avatar: string;
+    photos: string[];
     serviceTypes: serviceTypesType;
     serviceHours: serviceHoursType;
   } = res;
@@ -58,9 +73,15 @@ export async function POST(request: Request) {
       averageRating,
       ratingCount,
       instagramHandle,
+      avatar,
+      photos,
       serviceTypes: {
         create: {
-          sitIn: serviceTypes.sitIn,
+          sitIn: {
+            create: {
+              type: serviceTypes.sitIn.type,
+            },
+          },
           takeOut: serviceTypes.takeOut,
           delivery: serviceTypes.delivery,
         },
