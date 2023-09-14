@@ -21,6 +21,7 @@ import Select from "react-select";
 import validator from "validator";
 import { useState } from "react";
 import PhoneInput from "react-phone-number-input";
+import RatingButton from "./ratingButton";
 
 const dineOptions = [
   { value: "CAFE", label: "sit in" },
@@ -31,7 +32,7 @@ const hoursOptions = [{ value: new Date(), label: "Monday open" }];
 const VALUES = ["CAFE", "BAR"] as const;
 const formSchema = z.object({
   name: z.string(),
-  rating: z.number({ required_error: "A rating is required." }).gte(0).lte(5),
+  rating: z.number({ required_error: "A rating is required." }).gte(1).lte(5),
   phoneNumber: z.string().refine(validator.isMobilePhone).optional(),
   instagramHandle: z.string().optional(),
   avatar: z.string().optional(),
@@ -173,7 +174,13 @@ export default function CreateStore() {
                   <FormItem>
                     <FormLabel>Rating ⭐</FormLabel>
                     <FormControl>
-                      <Select options={ratingOptions} />
+                      <div className="space-x-4">
+                        <RatingButton ratingNumber={1} />
+                        <RatingButton ratingNumber={2} />
+                        <RatingButton ratingNumber={3} />
+                        <RatingButton ratingNumber={4} />
+                        <RatingButton ratingNumber={5} />
+                      </div>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
