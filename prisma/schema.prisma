@@ -11,19 +11,19 @@ datasource db {
 }
 
 model User {
-  id             String    @id @default(uuid())
-  email          String    @unique
-  username       String    @unique
-  beans          Float     @default(0.0)
-  hashedPassword String
-  avatar         String?
-  firstName      String?
-  lastName       String?
-  age            Int?
-  role           Role      @default(BASIC)
-  birthDate      DateTime?
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
+  id           String    @id @default(uuid())
+  email        String    @unique
+  username     String    @unique
+  beans        Float     @default(0.0)
+  passwordHash String
+  avatar       String?
+  firstName    String?
+  lastName     String?
+  age          Int?
+  role         Role      @default(BASIC)
+  birthDate    DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
 
   @@index([email])
 }
@@ -75,7 +75,7 @@ model ServiceHours {
 
 model Category {
   id           String        @id @default(uuid())
-  type         StoreTypes
+  type         DineTypes
   serviceTypes ServiceTypes?
 }
 
@@ -85,7 +85,7 @@ enum Role {
   ADMIN
 }
 
-enum StoreTypes {
+enum DineTypes {
   CAFE
   BAR
 }
