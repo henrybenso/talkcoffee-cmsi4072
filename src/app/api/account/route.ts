@@ -15,25 +15,46 @@ import { prisma } from "../../../../db";
 //   return NextResponse.json({ data });
 // }
 
-interface User {
-  email: String;
-  username: String;
-  hashedPassword: String;
+export const RoleTypes: {
+  BASIC: "BASIC";
+  PREMIUM: "PREMIUM";
+  ADMIN: "ADMIN";
+} = {
+  BASIC: "BASIC",
+  PREMIUM: "PREMIUM",
+  ADMIN: "ADMIN",
+};
+
+export type RoleTypes = (typeof RoleTypes)[keyof typeof RoleTypes];
+
+type UserType = {
+  email: string;
+  username: string;
+  beans: number;
+  passwordHash: string;
+  avatar?: string;
+  firstName?: string;
+  lastName?: string;
+  age?: number;
+  role: RoleTypes;
+  birthDate: Date;
 };
 
 export async function POST(request: Request) {
   const res = await request.json();
   console.log("res: ", res);
 
-  const { email, username, hashedPassword } = res;
+  const { email, username, passwordHash, avatar }: UserType = res;
 
   const result = await prisma.user.create({
     data: {
       email,
       username,
-      hashedPassword,
+      passwordHash,
+      ,
+
     },
   });
 
-  return NextResponse.json({ email, username, hashedPassword });
+  return NextResponse.json({ email, username, passwordHash });
 }
