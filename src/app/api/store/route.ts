@@ -110,13 +110,6 @@ export async function POST(request: Request) {
   });
 
   return NextResponse.json({
-    name,
-    averageRating,
-    ratingCount,
-    instagramHandle,
-    avatar,
-    photos,
-    serviceTypes,
-    serviceHours,
+    result,
   });
 }

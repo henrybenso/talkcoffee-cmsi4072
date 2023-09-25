@@ -44,17 +44,39 @@ export async function POST(request: Request) {
   const res = await request.json();
   console.log("res: ", res);
 
-  const { email, username, passwordHash, avatar }: UserType = res;
+  const {
+    email,
+    username,
+    passwordHash,
+    avatar,
+    firstName,
+    lastName,
+    age,
+    role,
+    birthDate,
+  }: UserType = res;
 
   const result = await prisma.user.create({
     data: {
       email,
       username,
       passwordHash,
-      ,
-
+      avatar,
+      firstName,
+      lastName,
+      age,
+      role,
+      birthDate,
     },
   });
 
-  return NextResponse.json({ email, username, passwordHash });
+  return NextResponse.json({ result });
+}
+
+export async function UPDATE(user: UserType) {
+  const result = prisma.user.findMany({
+    where: {
+      email: user.email,
+    },
+  });
 }

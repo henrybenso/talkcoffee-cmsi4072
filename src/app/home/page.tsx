@@ -40,12 +40,6 @@ export default function Home() {
         <h2 className="p-4">
           <Searchbar />
         </h2>
-        <div>
-          <link
-            href="https://api.mapbox.com/mapbox-gl-js/v2.8.1/mapbox-gl.css"
-            rel="stylesheet"
-          />
-        </div>
       </>
     </Layout>
   );
