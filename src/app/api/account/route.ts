@@ -1,19 +1,21 @@
 import { NextResponse } from "next/server";
 import { prisma } from "../../../../db";
 
-// export async function GET() {
-//   // const requestHeaders: HeadersInit = new Headers();
-//   // requestHeaders.set("Content-Type", "API-Key");
-//   // const res = await fetch("", {
-//   //   // headers: requestHeaders,
-//   // });
-//   // const result = await prisma.user.findUnique({
-//   //   where
-//   // })
-//   const data = await res.json();
+export async function GET(userEmail: string) {
+  // const requestHeaders: HeadersInit = new Headers();
+  // requestHeaders.set("Content-Type", "API-Key");
+  // const res = await fetch("", {
+  //   // headers: requestHeaders,
+  // });
+  const result = await prisma.user.findUnique({
+    where: {
+      email: userEmail,
+    },
+  });
+  const data = await result.json();
 
-//   return NextResponse.json({ data });
-// }
+  return NextResponse.json({ data });
+}
 
 export const RoleTypes: {
   BASIC: "BASIC";
@@ -32,10 +34,10 @@ type UserType = {
   username: string;
   beans: number;
   passwordHash: string;
-  avatar?: string;
-  firstName?: string;
-  lastName?: string;
-  age?: number;
+  avatar: string | null;
+  firstName: string | null;
+  lastName: string | null;
+  age: number | null;
   role: RoleTypes;
   birthDate: Date;
 };
@@ -74,9 +76,17 @@ export async function POST(request: Request) {
 }
 
 export async function UPDATE(user: UserType) {
-  const result = prisma.user.findMany({
+  const result = prisma.user.update({
     where: {
       email: user.email,
+    },
+    data: {
+      username: user.username,
+      avatar: user.avatar,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      age: user.age,
+      birthDate: user.birthDate,
     },
   });
 }
