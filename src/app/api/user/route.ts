@@ -75,18 +75,32 @@ export async function POST(request: Request) {
   return NextResponse.json({ result });
 }
 
-export async function UPDATE(user: UserType) {
+export async function UPDATE(request: Request) {
+  const res = await request.json();
+
+  const {
+    email,
+    username,
+    avatar,
+    firstName,
+    lastName,
+    age,
+    birthDate,
+  }: UserType = res;
+
   const result = prisma.user.update({
     where: {
-      email: user.email,
+      email: email,
     },
     data: {
-      username: user.username,
-      avatar: user.avatar,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      age: user.age,
-      birthDate: user.birthDate,
+      username: username,
+      avatar: avatar != null ? avatar : undefined,
+      firstName: firstName != null ? firstName : undefined,
+      lastName: lastName != null ? lastName : undefined,
+      age: age != null ? age : undefined,
+      birthDate: birthDate != null ? birthDate : undefined,
     },
   });
+
+  return NextResponse.json({ result });
 }

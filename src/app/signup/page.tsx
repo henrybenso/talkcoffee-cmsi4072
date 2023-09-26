@@ -39,7 +39,7 @@ export default function SignUp() {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     const { email, username, hashedPassword } = values;
-    const res = await fetch("http://localhost:3000/api/account", {
+    const res = await fetch("http://localhost:3000/api/user", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
