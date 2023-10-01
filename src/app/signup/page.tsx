@@ -1,3 +1,5 @@
+"use client";
+
 import Layout from "../layout";
 import Link from "next/link";
 import { zodResolver } from "@hookform/resolvers/zod";
