@@ -1,4 +1,4 @@
-"use client";
+// "use client";
 
 import Layout from "../layout";
 import Link from "next/link";
@@ -48,6 +48,7 @@ export default function SignUp() {
       },
       body: JSON.stringify({ email, username, hashedPassword }),
     });
+    console.log("Response from server:", res);
 
     const data = await res.json();
   }
