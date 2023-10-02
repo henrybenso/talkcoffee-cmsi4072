@@ -109,25 +109,36 @@ export default function CreateStore() {
       serviceTypes,
       serviceHours,
     } = values;
-    const res = await fetch("http://localhost:3000/api/store", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        name,
-        rating,
-        phoneNumber,
-        instagramHandle,
-        avatar,
-        photos,
-        serviceTypes,
-        serviceHours,
-      }),
-    });
-
-    const data = await res.json();
+  
+    try {
+      const res = await fetch("http://localhost:3000/api/store", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name,
+          rating,
+          phoneNumber,
+          instagramHandle,
+          avatar,
+          photos,
+          serviceTypes,
+          serviceHours,
+        }),
+      });
+  
+      if (res.ok) {
+        const data = await res.json();
+        // Handle the successful response here, e.g., redirect to a new page
+      } else {
+        // Handle the case where the request was not successful (e.g., show an error message)
+      }
+    } catch (error) {
+      // Handle any fetch-related errors here
+    }
   }
+  
 
   return (
     <>
