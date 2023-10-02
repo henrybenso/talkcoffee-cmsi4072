@@ -21,6 +21,8 @@ import validator from "validator";
 import { useState } from "react";
 import PhoneInput from "react-phone-number-input";
 import { timeOptions } from "../times";
+import PhoneNumberValidation from "../phonenumbervalidation"; 
+
 
 const dineOptions = [
   { value: "CAFE", label: "sit in" },
@@ -168,13 +170,11 @@ export default function CreateStore() {
                 name="phoneNumber"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Phone Number</FormLabel>
+                    {/* <FormLabel>Phone Number</FormLabel> */}
                     <FormControl>
-                      <PhoneInput
-                        defaultCountry="US"
-                        placeHolder="Enter phone number"
-                        value={value}
-                        onChange={setValue}
+                      <PhoneNumberValidation
+                        value={field.value}
+                        onChange={(value: string) => field.onChange(value)}
                       />
                     </FormControl>
                     <FormMessage />
