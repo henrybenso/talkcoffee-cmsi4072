@@ -22,10 +22,7 @@ import validator from "validator";
 import { useState } from "react";
 import PhoneInput from "react-phone-number-input";
 import RatingButton from "./ratingButton";
-<<<<<<< Updated upstream
-=======
-import PhoneNumberValidation from "../phonenumbervalidation"; 
->>>>>>> Stashed changes
+import PhoneNumberValidation from "../PhoneNumberValidation"; 
 
 const dineOptions = [
   { value: "CAFE", label: "sit in" },
@@ -67,13 +64,13 @@ const formSchema = z.object({
 });
 
 export default function CreateStore() {
+  const [value, setValue] = useState<string>();
+  const [country, setCountry] = useState<string>();
   const [selectedRating, setSelectedRating] = useState<number | undefined>();
   const onRatingButtonClick = (rating: number) => {
     // Update the selected rating when a RatingButton is clicked
     setSelectedRating(rating);
   };
-  const [value, setValue] = useState<string>();
-  const [country, setCountry] = useState<string>();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -197,24 +194,22 @@ export default function CreateStore() {
                   </FormItem>
                 )}
               />
-              {/* <FormField
+              <FormField
                 control={form.control}
                 name="phoneNumber"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Phone Number</FormLabel>
+                    {/* <FormLabel>Phone Number</FormLabel> */}
                     <FormControl>
-                      <PhoneInput
-                        defaultCountry="US"
-                        placeHolder="Enter phone number"
-                        value={value}
-                        onChange={setValue}
+                      <PhoneNumberValidation
+                        value={field.value}
+                        onChange={(value: string) => field.onChange(value)}
                       />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
-              /> */}
+              />
               <FormField
                 control={form.control}
                 name="instagramHandle"
