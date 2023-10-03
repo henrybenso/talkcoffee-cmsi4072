@@ -1,4 +1,4 @@
-// "use client";
+"use client";
 
 import Layout from "../layout";
 import Link from "next/link";
@@ -48,10 +48,21 @@ export default function SignUp() {
       },
       body: JSON.stringify({ email, username, hashedPassword }),
     });
-    console.log("Response from server:", res);
-
-    const data = await res.json();
+  
+    if (res.ok) {
+      try {
+        const data = await res.json();
+        // Handle the successful response here, e.g., redirect to a new page
+      } catch (error) {
+        console.error("Error parsing JSON response:", error);
+        // Handle the case where the JSON response cannot be parsed
+      }
+    } else {
+      console.error("Request was not successful. Status code:", res.status);
+      // Handle the case where the request was not successful (e.g., show an error message)
+    }
   }
+  
 
   return (
     <>
