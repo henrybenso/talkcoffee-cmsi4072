@@ -113,3 +113,19 @@ export async function POST(request: Request) {
     result,
   });
 }
+
+// export async function UPDATE(request: Request) {
+//   const res = await request.json();
+
+//   const { phoneNumber, instagramHandle, avatar, serviceTypes, serviceHours } =
+//     res;
+
+//   const result = prisma.user.update({
+//     where: {
+//       email: email,
+//     },
+//     data: {},
+//   });
+
+//   return NextResponse.json({ result });
+// }

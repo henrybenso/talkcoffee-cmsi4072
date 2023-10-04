@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 import { prisma } from "../../../../db";
 
-export async function GET(userEmail: string) {
+export async function GET(req: Request) {
+  const cred = req.credentials;
   // const requestHeaders: HeadersInit = new Headers();
   // requestHeaders.set("Content-Type", "API-Key");
   // const res = await fetch("", {
@@ -75,7 +76,7 @@ export async function POST(request: Request) {
   return NextResponse.json({ result });
 }
 
-export async function UPDATE(request: Request) {
+export async function PATCH(request: Request) {
   const res = await request.json();
 
   const {
@@ -99,6 +100,20 @@ export async function UPDATE(request: Request) {
       lastName: lastName != null ? lastName : undefined,
       age: age != null ? age : undefined,
       birthDate: birthDate != null ? birthDate : undefined,
+    },
+  });
+
+  return NextResponse.json({ result });
+}
+
+export async function DELETE(req: Request) {
+  const res = await req.json();
+
+  const { email }: { email: string } = res;
+
+  const result = prisma.user.delete({
+    where: {
+      email: email,
     },
   });
 
