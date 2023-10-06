@@ -36,7 +36,7 @@ const formSchema = z.object({
   phoneNumber: z.string().refine(validator.isMobilePhone).optional(),
   instagramHandle: z.string().optional(),
   avatar: z.string().optional(),
-  photos: z.array(z.string()),
+  images: z.array(z.string()),
   serviceTypes: z
     .object({
       sitInEnum: z.enum(VALUES),
@@ -65,6 +65,7 @@ const formSchema = z.object({
 export default function CreateStore() {
   const [value, setValue] = useState<string>();
   const [country, setCountry] = useState<string>();
+  const [imageUploaded, setImageUploaded] = useState();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -74,7 +75,7 @@ export default function CreateStore() {
       phoneNumber: "",
       instagramHandle: "",
       avatar: "",
-      photos: [],
+      images: [],
       serviceTypes: {
         sitInEnum: "CAFE",
         takeOut: false,
@@ -106,7 +107,7 @@ export default function CreateStore() {
       phoneNumber,
       instagramHandle,
       avatar,
-      photos,
+      images,
       serviceTypes,
       serviceHours,
     } = values;
@@ -121,7 +122,7 @@ export default function CreateStore() {
         phoneNumber,
         instagramHandle,
         avatar,
-        photos,
+        images,
         serviceTypes,
         serviceHours,
       }),
@@ -137,7 +138,7 @@ export default function CreateStore() {
           Back
         </Link>
         <Link
-          href="/addImage"
+          href="/stores/create/addImage"
           className={buttonVariants({ variant: "outline" })}
         >
           image upload button

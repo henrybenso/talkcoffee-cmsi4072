@@ -64,7 +64,7 @@ export async function POST(request: Request) {
     ratingCount,
     instagramHandle,
     avatar,
-    photos,
+    images,
     serviceTypes,
     serviceHours,
   }: StoreType = res;
@@ -76,7 +76,7 @@ export async function POST(request: Request) {
       ratingCount,
       instagramHandle,
       avatar,
-      photos,
+      images,
       serviceTypes: {
         create: {
           sitIn: {

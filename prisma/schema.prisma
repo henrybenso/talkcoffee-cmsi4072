@@ -36,7 +36,7 @@ model Store {
   phoneNumber     String?
   instagramHandle String?
   avatar          String?
-  photos          String[]
+  images          Image[]
   createdAt       DateTime     @default(now())
   updatedAt       DateTime     @updatedAt
   serviceTypes    ServiceTypes @relation(fields: [serviceTypesId], references: [id])
@@ -77,6 +77,15 @@ model Category {
   id           String        @id @default(uuid())
   type         DineTypes
   serviceTypes ServiceTypes?
+}
+
+model Image {
+  id       String @id @default(cuid())
+  publicId String @unique
+  format   String
+  version  String
+  Store    Store  @relation(fields: [storeId], references: [id])
+  storeId  String
 }
 
 enum Role {
