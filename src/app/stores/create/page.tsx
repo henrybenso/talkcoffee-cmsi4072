@@ -136,6 +136,12 @@ export default function CreateStore() {
         <Link href="/" className={buttonVariants({ variant: "outline" })}>
           Back
         </Link>
+        <Link
+          href="/addImage"
+          className={buttonVariants({ variant: "outline" })}
+        >
+          image upload button
+        </Link>
         <div>
           <section></section>
         </div>
