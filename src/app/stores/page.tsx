@@ -19,7 +19,7 @@ export default function Page({
     name: string;
     averageRating: number;
     phoneNumber: string | null;
-    photos: string[];
+    images: string[];
     instagram: string | null;
     serviceTypes: { sitIn: StoreType[]; takeOut: boolean; delivery: boolean };
     serviceHours: {

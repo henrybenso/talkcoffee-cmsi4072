@@ -1,25 +1,25 @@
-import { getImage } from "../../../utils/cloudinary";
-import { uploadImage } from "../../utils/cloudinary";
-import { prisma } from "../../../../db";
+// import { getImage } from "../../../utils/cloudinary";
+// import { uploadImage } from "../../../utils/formidable";
+// import { prisma } from "../../../../db";
 
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-};
+// export const config = {
+//   api: {
+//     bodyParser: false,
+//   },
+// };
 
-export default async function handle(req, res) {
-  const imageUploaded = await getImage(req);
+// export default async function handle(req, res) {
+//   const imageUploaded = await getImage(req);
 
-  const imageData = await uploadImage(imageUploaded.path);
+//   const imageData = await uploadImage(imageUploaded.path);
 
-  const result = await prisma.image.create({
-    data: {
-      publicId: imageData.public_id,
-      format: imageData.format,
-      version: imageData.version.toString(),
-    },
-  });
+//   const result = await prisma.image.create({
+//     data: {
+//       publicId: imageData.public_id,
+//       format: imageData.format,
+//       version: imageData.version.toString(),
+//     },
+//   });
 
-  res.json(result);
-}
+//   res.json(result);
+// }

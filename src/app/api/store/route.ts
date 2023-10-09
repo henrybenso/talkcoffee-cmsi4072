@@ -1,10 +1,8 @@
 import { NextResponse } from "next/server";
 import { prisma } from "../../../../db";
 
-export async function GET() {
-  const result = await prisma.store.findMany();
-  return NextResponse.json({ result });
-}
+import { getImage } from "../../../utils/formidable";
+import { uploadImage } from "../../../utils/cloudinary";
 
 export const DineTypes: {
   CAFE: "CAFE";
@@ -16,17 +14,23 @@ export const DineTypes: {
 
 export type DineTypes = (typeof DineTypes)[keyof typeof DineTypes];
 
-type categoryType = {
+type CategoryType = {
   type: DineTypes;
 };
 
-type serviceTypesType = {
-  sitIn: categoryType;
+type Image = {
+  publicId: string;
+  format: string;
+  version: string;
+};
+
+type ServiceTypesType = {
+  sitIn: CategoryType;
   takeOut: boolean;
   delivery: boolean;
 };
 
-type serviceHoursType = {
+type ServiceHoursType = {
   mondayOpen: Date;
   mondayClose: Date;
   tuesdayOpen: Date;
@@ -49,10 +53,15 @@ type StoreType = {
   ratingCount: number;
   instagramHandle: string;
   avatar: string;
-  photos: string[];
-  serviceTypes: serviceTypesType;
-  serviceHours: serviceHoursType;
+  images: Image[];
+  serviceTypes: ServiceTypesType;
+  serviceHours: ServiceHoursType;
 };
+
+export async function GET() {
+  const result = await prisma.store.findMany();
+  return NextResponse.json({ result });
+}
 
 export async function POST(request: Request) {
   const res = await request.json();
@@ -64,10 +73,18 @@ export async function POST(request: Request) {
     ratingCount,
     instagramHandle,
     avatar,
-    images,
     serviceTypes,
     serviceHours,
   }: StoreType = res;
+
+  const imageUploaded = await getImage(request);
+  const imageData = await uploadImage(imageUploaded.path);
+
+  const imagesData: Image[] = imageData.map((image) => ({
+    publicId: image.publicId,
+    format: image.format,
+    version: image.version,
+  }));
 
   const result = await prisma.store.create({
     data: {
@@ -76,7 +93,11 @@ export async function POST(request: Request) {
       ratingCount,
       instagramHandle,
       avatar,
-      images,
+      images: {
+        createMany: {
+          data: imagesData,
+        },
+      },
       serviceTypes: {
         create: {
           sitIn: {

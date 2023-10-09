@@ -138,7 +138,7 @@ export default function CreateStore() {
           Back
         </Link>
         <Link
-          href="/stores/create/addImage"
+          href="/stores/create/add-image"
           className={buttonVariants({ variant: "outline" })}
         >
           image upload button
