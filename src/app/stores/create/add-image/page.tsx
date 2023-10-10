@@ -3,45 +3,21 @@ import { useState } from "react";
 import Layout from "../../../layout";
 import Router from "next/router";
 
+const MAX_COUNT = 5;
+
 export default function Upload() {
-  const [imageUploaded, setImageUploaded] = useState();
-
-  const handleChange = (event) => {
-    setImageUploaded(event.target.files[0]);
-  };
-
-  const submitData = async (e) => {
-    e.preventDefault();
-
-    if (!imageUploaded) {
-      return;
-    }
-
-    try {
-      const formData = new FormData();
-      formData.append("image", imageUploaded);
-
-      await fetch("/api/upload", {
-        method: "POST",
-        body: formData,
-      });
-
-      Router.push("/");
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
   return (
     <Layout>
       <div className="page">
-        <form onSubmit={submitData}>
+        <form onSubmit={handleFileEvent}>
           <h1>Upload Image</h1>
 
           <input
-            onChange={handleChange}
-            accept=".jpg, .png, .gif, .jpeg"
+            id="fileUpload"
             type="file"
+            multiple
+            accept=".jpg, .png, .gif, .jpeg"
+            disabled={fileLimit}
           ></input>
 
           <input type="submit" value="Upload" disabled />
@@ -65,3 +41,19 @@ export default function Upload() {
     </Layout>
   );
 }
+
+<div className="page">
+  <form onSubmit={handleFileEvent}>
+    <h1>Upload Image</h1>
+
+    <input
+      id="fileUpload"
+      type="file"
+      multiple
+      accept=".jpg, .png, .gif, .jpeg"
+      disabled={fileLimit}
+    ></input>
+
+    <input type="submit" value="Upload" disabled />
+  </form>
+</div>;

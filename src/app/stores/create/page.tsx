@@ -22,6 +22,8 @@ import validator from "validator";
 import { useState } from "react";
 import PhoneInput from "react-phone-number-input";
 import RatingButton from "./ratingButton";
+import Upload from "./add-image/page";
+import Router from "next/router";
 
 const dineOptions = [
   { value: "CAFE", label: "sit in" },
@@ -62,10 +64,37 @@ const formSchema = z.object({
   }),
 });
 
+const MAX_COUNT = 5;
+
 export default function CreateStore() {
-  const [value, setValue] = useState<string>();
-  const [country, setCountry] = useState<string>();
-  const [imageUploaded, setImageUploaded] = useState();
+  // const [value, setValue] = useState<string>();
+  // const [country, setCountry] = useState<string>();
+
+  // const [uploadedFiles, setUploadedFiles] = useState([]);
+  // const [fileLimit, setFileLimit] = useState(false);
+
+  // const handleUploadFiles = (files) => {
+  //   const uploaded = [...uploadedFiles];
+  //   let limitExceeded = false;
+  //   files.some((file) => {
+  //     if (uploaded.findIndex((f) => f.name === file.name) === -1) {
+  //       uploaded.push(file);
+  //       if (uploaded.length == MAX_COUNT) setFileLimit(true);
+  //       if (uploaded.length > MAX_COUNT) {
+  //         alert("You can only add a maximum of ${MAX_COUNT} files");
+  //         setFileLimit(false);
+  //         limitExceeded = true;
+  //       }
+  //     }
+  //   });
+
+  //   if (!limitExceeded) setUploadedFiles(uploaded);
+  // };
+
+  // const handleFileEvent = (e) => {
+  //   const chosenFiles = Array.prototype.slice.call(e.target.files);
+  //   handleUploadFiles(chosenFiles);
+  // };
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -111,6 +140,7 @@ export default function CreateStore() {
       serviceTypes,
       serviceHours,
     } = values;
+
     const res = await fetch("http://localhost:3000/api/store", {
       method: "POST",
       headers: {
@@ -250,9 +280,52 @@ export default function CreateStore() {
                   </FormItem>
                 )}
               /> */}
+              {/* <FormField
+                control={form.control}
+                name="images"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Upload Images</FormLabel>
+                    <FormControl>
+                      <input
+                        id="fileUpload"
+                        type="file"
+                        multiple
+                        accept=".jpg, .png, .gif, .jpeg"
+                        disabled={fileLimit}
+                      ></input>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              /> */}
+              {/* <h1>Upload Image</h1>
+              <input
+                id="fileUpload"
+                type="file"
+                multiple
+                accept=".jpg, .png, .gif, .jpeg"
+                disabled={fileLimit}
+              ></input>
+              <input type="submit" value="Upload" disabled />; */}
               <Button type="submit">Submit</Button>
             </form>
           </Form>
+          {/* <div className="page">
+            <form onSubmit={handleFileEvent}>
+              <h1>Upload Image</h1>
+
+              <input
+                id="fileUpload"
+                type="file"
+                multiple
+                accept=".jpg, .png, .gif, .jpeg"
+                disabled={fileLimit}
+              ></input>
+
+              <input type="submit" value="Upload" disabled />
+            </form>
+          </div> */}
         </div>
       </Layout>
     </>
