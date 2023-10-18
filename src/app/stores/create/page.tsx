@@ -22,7 +22,7 @@ import validator from "validator";
 import { useState } from "react";
 import PhoneInput from "react-phone-number-input";
 import RatingButton from "./ratingButton";
-import PhoneNumberValidation from "../PhoneNumberValidation"; 
+import PhoneNumberValidation from "./PhoneNumberValidation"; 
 
 const dineOptions = [
   { value: "CAFE", label: "sit in" },

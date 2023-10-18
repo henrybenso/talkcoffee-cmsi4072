@@ -21,7 +21,7 @@ import validator from "validator";
 import { useState } from "react";
 import PhoneInput from "react-phone-number-input";
 import { timeOptions } from "../times";
-import PhoneNumberValidation from "../PhoneNumberValidation"; 
+import PhoneNumberValidation from "../phonenumbervalidation"; 
 
 const dineOptions = [
   { value: "CAFE", label: "sit in" },
