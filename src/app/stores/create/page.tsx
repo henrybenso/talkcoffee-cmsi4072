@@ -20,10 +20,7 @@ import {
 import Select from "react-select";
 import validator from "validator";
 import { useState } from "react";
-import PhoneInput from "react-phone-number-input";
 import RatingButton from "./ratingButton";
-import Upload from "./add-image/page";
-import Router from "next/router";
 
 const dineOptions = [
   { value: "CAFE", label: "sit in" },
@@ -70,31 +67,31 @@ export default function CreateStore() {
   // const [value, setValue] = useState<string>();
   // const [country, setCountry] = useState<string>();
 
-  // const [uploadedFiles, setUploadedFiles] = useState([]);
-  // const [fileLimit, setFileLimit] = useState(false);
+  const [uploadedFiles, setUploadedFiles] = useState([]);
+  const [fileLimit, setFileLimit] = useState(false);
 
-  // const handleUploadFiles = (files) => {
-  //   const uploaded = [...uploadedFiles];
-  //   let limitExceeded = false;
-  //   files.some((file) => {
-  //     if (uploaded.findIndex((f) => f.name === file.name) === -1) {
-  //       uploaded.push(file);
-  //       if (uploaded.length == MAX_COUNT) setFileLimit(true);
-  //       if (uploaded.length > MAX_COUNT) {
-  //         alert("You can only add a maximum of ${MAX_COUNT} files");
-  //         setFileLimit(false);
-  //         limitExceeded = true;
-  //       }
-  //     }
-  //   });
+  const handleUploadFiles = (files) => {
+    const uploaded = [...uploadedFiles];
+    let limitExceeded = false;
+    files.some((file) => {
+      if (uploaded.findIndex((f) => f.name === file.name) === -1) {
+        uploaded.push(file);
+        if (uploaded.length == MAX_COUNT) setFileLimit(true);
+        if (uploaded.length > MAX_COUNT) {
+          alert("You can only add a maximum of ${MAX_COUNT} files");
+          setFileLimit(false);
+          limitExceeded = true;
+        }
+      }
+    });
 
-  //   if (!limitExceeded) setUploadedFiles(uploaded);
-  // };
+    if (!limitExceeded) setUploadedFiles(uploaded);
+  };
 
-  // const handleFileEvent = (e) => {
-  //   const chosenFiles = Array.prototype.slice.call(e.target.files);
-  //   handleUploadFiles(chosenFiles);
-  // };
+  const handleFileEvent = (e) => {
+    const chosenFiles = Array.prototype.slice.call(e.target.files);
+    handleUploadFiles(chosenFiles);
+  };
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -130,16 +127,8 @@ export default function CreateStore() {
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    const {
-      name,
-      rating,
-      phoneNumber,
-      instagramHandle,
-      avatar,
-      images,
-      serviceTypes,
-      serviceHours,
-    } = values;
+    const { name, rating, instagramHandle, avatar, images, serviceTypes } =
+      values;
 
     const res = await fetch("http://localhost:3000/api/store", {
       method: "POST",
@@ -149,12 +138,10 @@ export default function CreateStore() {
       body: JSON.stringify({
         name,
         rating,
-        phoneNumber,
         instagramHandle,
         avatar,
         images,
         serviceTypes,
-        serviceHours,
       }),
     });
 
@@ -223,24 +210,6 @@ export default function CreateStore() {
                   </FormItem>
                 )}
               />
-              {/* <FormField
-                control={form.control}
-                name="phoneNumber"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Phone Number</FormLabel>
-                    <FormControl>
-                      <PhoneInput
-                        defaultCountry="US"
-                        placeHolder="Enter phone number"
-                        value={value}
-                        onChange={setValue}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              /> */}
               <FormField
                 control={form.control}
                 name="instagramHandle"
@@ -267,20 +236,7 @@ export default function CreateStore() {
                   </FormItem>
                 )}
               />
-              {/* <FormField
-                control={form.control}
-                name="serviceHours"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Store Hours</FormLabel>
-                    <FormControl>
-                      <Select isMulti options={hoursOptions} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              /> */}
-              {/* <FormField
+              <FormField
                 control={form.control}
                 name="images"
                 render={({ field }) => (
@@ -298,34 +254,10 @@ export default function CreateStore() {
                     <FormMessage />
                   </FormItem>
                 )}
-              /> */}
-              {/* <h1>Upload Image</h1>
-              <input
-                id="fileUpload"
-                type="file"
-                multiple
-                accept=".jpg, .png, .gif, .jpeg"
-                disabled={fileLimit}
-              ></input>
-              <input type="submit" value="Upload" disabled />; */}
+              />
               <Button type="submit">Submit</Button>
             </form>
           </Form>
-          {/* <div className="page">
-            <form onSubmit={handleFileEvent}>
-              <h1>Upload Image</h1>
-
-              <input
-                id="fileUpload"
-                type="file"
-                multiple
-                accept=".jpg, .png, .gif, .jpeg"
-                disabled={fileLimit}
-              ></input>
-
-              <input type="submit" value="Upload" disabled />
-            </form>
-          </div> */}
         </div>
       </Layout>
     </>

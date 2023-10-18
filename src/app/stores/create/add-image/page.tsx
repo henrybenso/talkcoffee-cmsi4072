@@ -42,7 +42,8 @@ export default function Upload() {
   );
 }
 
-<div className="page">
+{
+  /* <div className="page">
   <form onSubmit={handleFileEvent}>
     <h1>Upload Image</h1>
 
@@ -56,4 +57,5 @@ export default function Upload() {
 
     <input type="submit" value="Upload" disabled />
   </form>
-</div>;
+</div>; */
+}
