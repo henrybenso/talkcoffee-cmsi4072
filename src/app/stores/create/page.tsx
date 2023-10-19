@@ -199,11 +199,7 @@ export default function CreateStore() {
                     <FormLabel>Rating ⭐</FormLabel>
                     <FormControl>
                       <div className="space-x-4">
-                        <RatingButton ratingNumber={1} />
-                        <RatingButton ratingNumber={2} />
-                        <RatingButton ratingNumber={3} />
-                        <RatingButton ratingNumber={4} />
-                        <RatingButton ratingNumber={5} />
+                        <RatingButton />
                       </div>
                     </FormControl>
                     <FormMessage />
@@ -223,18 +219,19 @@ export default function CreateStore() {
                   </FormItem>
                 )}
               />
-              <FormField
-                control={form.control}
+              <FormLabel>Store Type</FormLabel>
+              <Controller
                 name="serviceTypes.sitInEnum"
                 render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Store Type(s)</FormLabel>
-                    <FormControl>
-                      <Select isMulti options={dineOptions} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
+                  <Select
+                    {...field}
+                    options={[
+                      { value: "CAFE", label: "sit in" },
+                      { value: "BAR", label: "bar" },
+                    ]}
+                  />
                 )}
+                control={form.control}
               />
               <FormField
                 control={form.control}

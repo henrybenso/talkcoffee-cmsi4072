@@ -1,8 +1,34 @@
 import { NextResponse } from "next/server";
 import { prisma } from "../../../../db";
 
-import { getImage } from "../../../utils/formidable";
-import { uploadImage } from "../../../utils/cloudinary";
+import { getImage } from "@/utils/formidable";
+import { uploadImage } from "@/utils/cloudinary";
+
+export const config = {
+  api: {
+    bodyParser: false,
+  },
+};
+
+// export default async function handle(req, res) {
+//   const imageUploaded = await getImage(req);
+//   let imageDatas = [];
+//   imageUploaded.map(async (image) => {
+//     const imageData = await uploadImage(image.path);
+//     imageDatas.append(imageData);
+//   });
+//   // const imageData = await uploadImage(imageUploaded.path);
+
+//   const result = await prisma.image.create({
+//     data: {
+//       publicId: imageData.public_id,
+//       format: imageData.format,
+//       version: imageData.version.toString(),
+//     },
+//   });
+
+//   res.json(result);
+// }
 
 export const DineTypes: {
   CAFE: "CAFE";
@@ -53,9 +79,14 @@ type StoreType = {
   ratingCount: number;
   instagramHandle: string;
   avatar: string;
-  images: Image[];
   serviceTypes: ServiceTypesType;
   serviceHours: ServiceHoursType;
+};
+
+type ImagesTypes = {
+  publicId: string;
+  format: string;
+  version: string;
 };
 
 export async function GET() {
@@ -78,13 +109,15 @@ export async function POST(request: Request) {
   }: StoreType = res;
 
   const imageUploaded = await getImage(request);
-  const imageData = await uploadImage(imageUploaded.path);
-
-  const imagesData: Image[] = imageData.map((image) => ({
-    publicId: image.publicId,
-    format: image.format,
-    version: image.version,
-  }));
+  let imageDatas = [];
+  imageUploaded.map(async (image) => {
+    const imageData = await uploadImage(image.path);
+    imageDatas.append({
+      publicId: imageData.public_id,
+      format: imageData.format,
+      version: imageData.version.tostring(),
+    });
+  });
 
   const result = await prisma.store.create({
     data: {
@@ -95,7 +128,8 @@ export async function POST(request: Request) {
       avatar,
       images: {
         createMany: {
-          data: imagesData,
+          data: imageDatas,
+          skipDuplicates: true,
         },
       },
       serviceTypes: {
