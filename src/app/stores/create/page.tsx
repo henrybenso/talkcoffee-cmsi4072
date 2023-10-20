@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/form";
 import Select from "react-select";
 import validator from "validator";
-import { useState } from "react";
+import { SetStateAction, useState } from "react";
 import RatingButton from "./ratingButton";
 
 const dineOptions = [
@@ -29,8 +29,8 @@ const dineOptions = [
 
 const hoursOptions = [{ value: new Date(), label: "Monday open" }];
 const VALUES = ["CAFE", "BAR"] as const;
-const formSchema = z.object({
-  name: z.string(),
+const schema = z.object({
+  name: z.string().min(1, { message: "Required" }),
   rating: z.number({ required_error: "A rating is required." }).gte(1).lte(5),
   phoneNumber: z.string().refine(validator.isMobilePhone).optional(),
   instagramHandle: z.string().optional(),
@@ -64,9 +64,19 @@ const formSchema = z.object({
 const MAX_COUNT = 5;
 
 export default function CreateStore() {
-  // const [value, setValue] = useState<string>();
-  // const [country, setCountry] = useState<string>();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    resolver: zodResolver(schema),
+  });
 
+  const onSubmit = (data) => {
+    alert(JSON.stringify(data));
+  };
+
+  const [rating, setRating] = useState(0);
   const [uploadedFiles, setUploadedFiles] = useState([]);
   const [fileLimit, setFileLimit] = useState(false);
 
@@ -93,60 +103,60 @@ export default function CreateStore() {
     handleUploadFiles(chosenFiles);
   };
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      name: "",
-      rating: undefined,
-      phoneNumber: "",
-      instagramHandle: "",
-      avatar: "",
-      images: [],
-      serviceTypes: {
-        sitInEnum: "CAFE",
-        takeOut: false,
-        delivery: false,
-      },
-      serviceHours: {
-        mondayOpen: new Date(),
-        mondayClose: new Date(),
-        tuesdayOpen: new Date(),
-        tuesdayClose: new Date(),
-        wednesdayOpen: new Date(),
-        wednesdayClose: new Date(),
-        thursdayOpen: new Date(),
-        thursdayClose: new Date(),
-        fridayOpen: new Date(),
-        fridayClose: new Date(),
-        saturdayOpen: new Date(),
-        saturdayClose: new Date(),
-        sundayOpen: new Date(),
-        sundayClose: new Date(),
-      },
-    },
-  });
+  // const form = useForm<z.infer<typeof formSchema>>({
+  //   resolver: zodResolver(formSchema),
+  //   defaultValues: {
+  //     name: "",
+  //     rating: undefined,
+  //     phoneNumber: "",
+  //     instagramHandle: "",
+  //     avatar: "",
+  //     images: [],
+  //     serviceTypes: {
+  //       sitInEnum: "CAFE",
+  //       takeOut: false,
+  //       delivery: false,
+  //     },
+  //     serviceHours: {
+  //       mondayOpen: new Date(),
+  //       mondayClose: new Date(),
+  //       tuesdayOpen: new Date(),
+  //       tuesdayClose: new Date(),
+  //       wednesdayOpen: new Date(),
+  //       wednesdayClose: new Date(),
+  //       thursdayOpen: new Date(),
+  //       thursdayClose: new Date(),
+  //       fridayOpen: new Date(),
+  //       fridayClose: new Date(),
+  //       saturdayOpen: new Date(),
+  //       saturdayClose: new Date(),
+  //       sundayOpen: new Date(),
+  //       sundayClose: new Date(),
+  //     },
+  //   },
+  // });
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
-    const { name, rating, instagramHandle, avatar, images, serviceTypes } =
-      values;
+  // async function onSubmit(values: z.infer<typeof schema>) {
+  //   const { name, rating, instagramHandle, avatar, images, serviceTypes } =
+  //     values;
 
-    const res = await fetch("http://localhost:3000/api/store", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        name,
-        rating,
-        instagramHandle,
-        avatar,
-        images,
-        serviceTypes,
-      }),
-    });
+  //   const res = await fetch("http://localhost:3000/api/store", {
+  //     method: "POST",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //     },
+  //     body: JSON.stringify({
+  //       name,
+  //       rating,
+  //       instagramHandle,
+  //       avatar,
+  //       images,
+  //       serviceTypes,
+  //     }),
+  //   });
 
-    const data = await res.json();
-  }
+  //   const data = await res.json();
+  // }
 
   return (
     <>
@@ -175,86 +185,14 @@ export default function CreateStore() {
               add a store ☕
             </h1>
           </section>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-              <FormField
-                control={form.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Store Name</FormLabel>
-                    <FormControl>
-                      <Input placeholder="" {...field} />
-                    </FormControl>
-                    <FormDescription></FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="rating"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Rating ⭐</FormLabel>
-                    <FormControl>
-                      <div className="space-x-4">
-                        <RatingButton />
-                      </div>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="instagramHandle"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Instagram Handle</FormLabel>
-                    <FormControl>
-                      <Input placeholder="@" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormLabel>Store Type</FormLabel>
-              <Controller
-                name="serviceTypes.sitInEnum"
-                render={({ field }) => (
-                  <Select
-                    {...field}
-                    options={[
-                      { value: "CAFE", label: "sit in" },
-                      { value: "BAR", label: "bar" },
-                    ]}
-                  />
-                )}
-                control={form.control}
-              />
-              <FormField
-                control={form.control}
-                name="images"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Upload Images</FormLabel>
-                    <FormControl>
-                      <input
-                        id="fileUpload"
-                        type="file"
-                        multiple
-                        accept=".jpg, .png, .gif, .jpeg"
-                        disabled={fileLimit}
-                      ></input>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <Button type="submit">Submit</Button>
-            </form>
-          </Form>
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+            <div>
+              <label>Store Name</label>
+              <input {...register("name")} />
+              {errors.name?.message && <p>{errors.name?.message}</p>}
+            </div>
+            <Button type="submit">Submit</Button>
+          </form>
         </div>
       </Layout>
     </>
