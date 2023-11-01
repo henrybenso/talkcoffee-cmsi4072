@@ -4,31 +4,11 @@ import { prisma } from "../../../../db";
 import { getImage } from "@/utils/formidable";
 import { uploadImage } from "@/utils/cloudinary";
 
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-};
-
-// export default async function handle(req, res) {
-//   const imageUploaded = await getImage(req);
-//   let imageDatas = [];
-//   imageUploaded.map(async (image) => {
-//     const imageData = await uploadImage(image.path);
-//     imageDatas.append(imageData);
-//   });
-//   // const imageData = await uploadImage(imageUploaded.path);
-
-//   const result = await prisma.image.create({
-//     data: {
-//       publicId: imageData.public_id,
-//       format: imageData.format,
-//       version: imageData.version.toString(),
-//     },
-//   });
-
-//   res.json(result);
-// }
+// export const config = {
+//   api: {
+//     bodyParser: false,
+//   },
+// };
 
 export const DineTypes: {
   CAFE: "CAFE";
@@ -42,12 +22,6 @@ export type DineTypes = (typeof DineTypes)[keyof typeof DineTypes];
 
 type CategoryType = {
   type: DineTypes;
-};
-
-type Image = {
-  publicId: string;
-  format: string;
-  version: string;
 };
 
 type ServiceTypesType = {
@@ -79,11 +53,12 @@ type StoreType = {
   ratingCount: number;
   instagramHandle: string;
   avatar: string;
+  images: [ImagesType]
   serviceTypes: ServiceTypesType;
   serviceHours: ServiceHoursType;
 };
 
-type ImagesTypes = {
+type ImagesType = {
   publicId: string;
   format: string;
   version: string;

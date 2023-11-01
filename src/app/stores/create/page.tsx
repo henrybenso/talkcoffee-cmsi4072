@@ -63,6 +63,27 @@ const schema = z.object({
 
 const MAX_COUNT = 5;
 
+// interface IFormValues {
+//   "name": string
+//   rating: number
+//   "phoneNumber": string
+  
+// }
+
+// type InputProps = {
+//   label: Path<IFormValues>
+//   register: UseFormRegister<IFormValues>
+//   required: boolean
+// }
+
+// // The following component is an example of your existing Input Component
+// const Input = ({ label, register, required }: InputProps) => (
+//   <>
+//     <label>{label}</label>
+//     <input {...register(label, { required })} />
+//   </>
+// )
+
 export default function CreateStore() {
   const {
     register,
@@ -72,9 +93,9 @@ export default function CreateStore() {
     resolver: zodResolver(schema),
   });
 
-  const onSubmit = (data) => {
-    alert(JSON.stringify(data));
-  };
+  // const onSubmit = (data) => {
+  //   alert(JSON.stringify(data));
+  // };
 
   const [rating, setRating] = useState(0);
   const [uploadedFiles, setUploadedFiles] = useState([]);
@@ -136,27 +157,27 @@ export default function CreateStore() {
   //   },
   // });
 
-  // async function onSubmit(values: z.infer<typeof schema>) {
-  //   const { name, rating, instagramHandle, avatar, images, serviceTypes } =
-  //     values;
+  async function onSubmit(values: z.infer<typeof schema>) {
+    const { name, rating, instagramHandle, avatar, images, serviceTypes } =
+      values;
 
-  //   const res = await fetch("http://localhost:3000/api/store", {
-  //     method: "POST",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //     },
-  //     body: JSON.stringify({
-  //       name,
-  //       rating,
-  //       instagramHandle,
-  //       avatar,
-  //       images,
-  //       serviceTypes,
-  //     }),
-  //   });
+    const res = await fetch("http://localhost:3000/api/store", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name,
+        rating,
+        instagramHandle,
+        avatar,
+        images,
+        serviceTypes,
+      }),
+    });
 
-  //   const data = await res.json();
-  // }
+    const data = await res.json();
+  }
 
   return (
     <>
@@ -190,6 +211,38 @@ export default function CreateStore() {
               <label>Store Name</label>
               <input {...register("name")} />
               {errors.name?.message && <p>{errors.name?.message}</p>}
+            </div>
+            {/* <div>
+              <Input label="rating" register={register} required />
+              <Select
+    defaultValue={ratingOptions[1]}
+    options={ratingOptions}
+    // formatGroupLabel={formatGroupLabel}
+  />
+            </div> */}
+                        <div>
+              <label>Rating</label>
+              <input {...register("rating")} />
+              {errors.rating?.message && <p>{errors.rating?.message}</p>}
+            </div>
+            <div>
+              <label>Instagram</label>
+              <input {...register("instagram")} />
+              {errors.instagram?.message && <p>{errors.instagram?.message}</p>}
+            </div>
+            <div>
+              <label>Service Types</label>
+              <input {...register("servicetypes")} />
+              {errors.servicetypes?.message && <p>{errors.servicetypes?.message}</p>}
+            </div>
+            <div>
+            <input
+                        id="fileUpload"
+                        type="file"
+                        multiple
+                        accept=".jpg, .png, .gif, .jpeg"
+                        disabled={fileLimit}
+                      ></input>
             </div>
             <Button type="submit">Submit</Button>
           </form>
