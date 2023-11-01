@@ -52,8 +52,9 @@ type StoreType = {
   averageRating: number;
   ratingCount: number;
   instagramHandle: string;
+  phoneNumber: string;
   avatar: string;
-  images: [ImagesType]
+  // images: [ImagesType]
   serviceTypes: ServiceTypesType;
   serviceHours: ServiceHoursType;
 };
@@ -78,9 +79,10 @@ export async function POST(request: Request) {
     averageRating,
     ratingCount,
     instagramHandle,
+    phoneNumber,
     avatar,
-    serviceTypes,
-    serviceHours,
+    // serviceTypes,
+    // serviceHours,
   }: StoreType = res;
 
   const imageUploaded = await getImage(request);
@@ -100,6 +102,7 @@ export async function POST(request: Request) {
       averageRating,
       ratingCount,
       instagramHandle,
+      phoneNumber,
       avatar,
       images: {
         createMany: {
@@ -107,35 +110,35 @@ export async function POST(request: Request) {
           skipDuplicates: true,
         },
       },
-      serviceTypes: {
-        create: {
-          sitIn: {
-            create: {
-              type: serviceTypes.sitIn.type,
-            },
-          },
-          takeOut: serviceTypes.takeOut,
-          delivery: serviceTypes.delivery,
-        },
-      },
-      serviceHours: {
-        create: {
-          mondayOpen: serviceHours.mondayOpen,
-          mondayClose: serviceHours.mondayClose,
-          tuesdayOpen: serviceHours.tuesdayOpen,
-          tuesdayClose: serviceHours.tuesdayClose,
-          wednesdayOpen: serviceHours.wednesdayOpen,
-          wednesdayClose: serviceHours.wednesdayClose,
-          thursdayOpen: serviceHours.thursdayOpen,
-          thursdayClose: serviceHours.thursdayClose,
-          fridayOpen: serviceHours.fridayOpen,
-          fridayClose: serviceHours.fridayClose,
-          saturdayOpen: serviceHours.saturdayOpen,
-          saturdayClose: serviceHours.saturdayClose,
-          sundayOpen: serviceHours.sundayOpen,
-          sundayClose: serviceHours.sundayClose,
-        },
-      },
+      // serviceTypes: {
+      //   create: {
+      //     sitIn: {
+      //       create: {
+      //         type: serviceTypes.sitIn.type,
+      //       },
+      //     },
+      //     takeOut: serviceTypes.takeOut,
+      //     delivery: serviceTypes.delivery,
+      //   },
+      // },
+      // serviceHours: {
+      //   create: {
+      //     mondayOpen: serviceHours.mondayOpen,
+      //     mondayClose: serviceHours.mondayClose,
+      //     tuesdayOpen: serviceHours.tuesdayOpen,
+      //     tuesdayClose: serviceHours.tuesdayClose,
+      //     wednesdayOpen: serviceHours.wednesdayOpen,
+      //     wednesdayClose: serviceHours.wednesdayClose,
+      //     thursdayOpen: serviceHours.thursdayOpen,
+      //     thursdayClose: serviceHours.thursdayClose,
+      //     fridayOpen: serviceHours.fridayOpen,
+      //     fridayClose: serviceHours.fridayClose,
+      //     saturdayOpen: serviceHours.saturdayOpen,
+      //     saturdayClose: serviceHours.saturdayClose,
+      //     sundayOpen: serviceHours.sundayOpen,
+      //     sundayClose: serviceHours.sundayClose,
+      //   },
+      // },
     },
   });
 
