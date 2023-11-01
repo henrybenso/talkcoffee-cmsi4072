@@ -231,10 +231,22 @@ export default function CreateStore() {
               {errors.instagram?.message && <p>{errors.instagram?.message}</p>}
             </div>
             <div>
-              <label>Service Types</label>
-              <input {...register("servicetypes")} />
+              <label>Phone Number</label>
+              <input {...register("phoneNumber")} />
+              {errors.phoneNumber?.message && <p>{errors.phoneNumber?.message}</p>}
+            </div>
+            <div>
+              <label>avatar</label>
+              <input {...register("avatar")} />
+              {errors.avatar?.message && <p>{errors.avatar?.message}</p>}
+            </div>
+            <div>
+              <label>Service Types Sit In</label>
+              <input {...register("servicetypes.sitIn")} />
               {errors.servicetypes?.message && <p>{errors.servicetypes?.message}</p>}
             </div>
+            
+
             <div>
             <input
                         id="fileUpload"
