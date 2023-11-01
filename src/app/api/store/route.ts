@@ -104,12 +104,12 @@ export async function POST(request: Request) {
       instagramHandle,
       phoneNumber,
       avatar,
-      images: {
-        createMany: {
-          data: imageDatas,
-          skipDuplicates: true,
-        },
-      },
+      // images: {
+      //   createMany: {
+      //     data: imageDatas,
+      //     skipDuplicates: true,
+      //   },
+      // },
       // serviceTypes: {
       //   create: {
       //     sitIn: {
