@@ -7,27 +7,19 @@ import { Button } from "@/components/ui/button";
 import { buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ratingOptions } from "./ratings";
-import { useForm, Controller } from "react-hook-form";
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import { useForm, SubmitHandler, Controller } from "react-hook-form";
 import Select from "react-select";
 import validator from "validator";
 import { SetStateAction, useState } from "react";
 import RatingButton from "./ratingButton";
+import * as Label from "@radix-ui/react-label";
 
 const dineOptions = [
   { value: "CAFE", label: "sit in" },
   { value: "BAR", label: "bar" },
 ];
 
-const hoursOptions = [{ value: new Date(), label: "Monday open" }];
+// const hoursOptions = [{ value: new Date(), label: "Monday open" }];
 const VALUES = ["CAFE", "BAR"] as const;
 const schema = z.object({
   name: z.string().min(1, { message: "Required" }),
@@ -61,28 +53,7 @@ const schema = z.object({
   }),
 });
 
-const MAX_COUNT = 5;
-
-// interface IFormValues {
-//   "name": string
-//   rating: number
-//   "phoneNumber": string
-  
-// }
-
-// type InputProps = {
-//   label: Path<IFormValues>
-//   register: UseFormRegister<IFormValues>
-//   required: boolean
-// }
-
-// // The following component is an example of your existing Input Component
-// const Input = ({ label, register, required }: InputProps) => (
-//   <>
-//     <label>{label}</label>
-//     <input {...register(label, { required })} />
-//   </>
-// )
+// const MAX_COUNT = 5;
 
 export default function CreateStore() {
   const {
@@ -93,36 +64,33 @@ export default function CreateStore() {
     resolver: zodResolver(schema),
   });
 
-  // const onSubmit = (data) => {
-  //   alert(JSON.stringify(data));
-  // };
+  const onSubmit = (data) => console.log(data);
 
-  const [rating, setRating] = useState(0);
-  const [uploadedFiles, setUploadedFiles] = useState([]);
+  // const [uploadedFiles, setUploadedFiles] = useState([]);
   const [fileLimit, setFileLimit] = useState(false);
 
-  const handleUploadFiles = (files) => {
-    const uploaded = [...uploadedFiles];
-    let limitExceeded = false;
-    files.some((file) => {
-      if (uploaded.findIndex((f) => f.name === file.name) === -1) {
-        uploaded.push(file);
-        if (uploaded.length == MAX_COUNT) setFileLimit(true);
-        if (uploaded.length > MAX_COUNT) {
-          alert("You can only add a maximum of ${MAX_COUNT} files");
-          setFileLimit(false);
-          limitExceeded = true;
-        }
-      }
-    });
+  // const handleUploadFiles = (files) => {
+  //   const uploaded = [...uploadedFiles];
+  //   let limitExceeded = false;
+  //   files.some((file) => {
+  //     if (uploaded.findIndex((f) => f.name === file.name) === -1) {
+  //       uploaded.push(file);
+  //       if (uploaded.length == MAX_COUNT) setFileLimit(true);
+  //       if (uploaded.length > MAX_COUNT) {
+  //         alert("You can only add a maximum of ${MAX_COUNT} files");
+  //         setFileLimit(false);
+  //         limitExceeded = true;
+  //       }
+  //     }
+  //   });
 
-    if (!limitExceeded) setUploadedFiles(uploaded);
-  };
+  //   if (!limitExceeded) setUploadedFiles(uploaded);
+  // };
 
-  const handleFileEvent = (e) => {
-    const chosenFiles = Array.prototype.slice.call(e.target.files);
-    handleUploadFiles(chosenFiles);
-  };
+  // const handleFileEvent = (e) => {
+  //   const chosenFiles = Array.prototype.slice.call(e.target.files);
+  //   handleUploadFiles(chosenFiles);
+  // };
 
   // const form = useForm<z.infer<typeof formSchema>>({
   //   resolver: zodResolver(formSchema),
@@ -157,27 +125,27 @@ export default function CreateStore() {
   //   },
   // });
 
-  async function onSubmit(values: z.infer<typeof schema>) {
-    const { name, rating, instagramHandle, avatar, images, serviceTypes } =
-      values;
+  // async function onSubmit(values: z.infer<typeof schema>) {
+  //   const { name, rating, instagramHandle, avatar, images, serviceTypes } =
+  //     values;
 
-    const res = await fetch("http://localhost:3000/api/store", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        name,
-        rating,
-        instagramHandle,
-        avatar,
-        images,
-        serviceTypes,
-      }),
-    });
+  //   const res = await fetch("http://localhost:3000/api/store", {
+  //     method: "POST",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //     },
+  //     body: JSON.stringify({
+  //       name,
+  //       rating,
+  //       instagramHandle,
+  //       avatar,
+  //       images,
+  //       serviceTypes,
+  //     }),
+  //   });
 
-    const data = await res.json();
-  }
+  //   const data = await res.json();
+  // }
 
   return (
     <>
@@ -191,9 +159,6 @@ export default function CreateStore() {
         >
           image upload button
         </Link>
-        <div>
-          <section></section>
-        </div>
         <div className="grid place-content-center">
           <section>
             <div>
@@ -207,20 +172,29 @@ export default function CreateStore() {
             </h1>
           </section>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
-            <div>
-              <label>Store Name</label>
-              <input {...register("name")} />
-              {errors.name?.message && <p>{errors.name?.message}</p>}
+            <div className="flex flex-wrap items-center gap-[15px] px-5">
+              <label className="text-[15px] font-medium text-black">
+                Store Name
+              </label>
+              <input
+                className="flex h-10 w-full rounded-md border-2 border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none hover:border-transparent focus:outline-none focus:ring-2 focus:ring-yellow-700 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                type="text"
+                id="storeName"
+                defaultValue="Blue Bottle Coffee"
+              />
+            </div>
+            <div className="flex flex-wrap items-center gap-[15px] px-5">
+              <label className="text-[15px] font-medium leading-[35px] text-black">
+                Instagram
+              </label>
+              <input
+                className="flex h-10 w-full rounded-md border-2 border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none hover:border-transparent focus:outline-none focus:ring-2 focus:ring-yellow-700 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                type="text"
+                id="instagram"
+                defaultValue="@"
+              />
             </div>
             {/* <div>
-              <Input label="rating" register={register} required />
-              <Select
-    defaultValue={ratingOptions[1]}
-    options={ratingOptions}
-    // formatGroupLabel={formatGroupLabel}
-  />
-            </div> */}
-                        <div>
               <label>Rating</label>
               <input {...register("rating")} />
               {errors.rating?.message && <p>{errors.rating?.message}</p>}
@@ -233,7 +207,9 @@ export default function CreateStore() {
             <div>
               <label>Phone Number</label>
               <input {...register("phoneNumber")} />
-              {errors.phoneNumber?.message && <p>{errors.phoneNumber?.message}</p>}
+              {errors.phoneNumber?.message && (
+                <p>{errors.phoneNumber?.message}</p>
+              )}
             </div>
             <div>
               <label>avatar</label>
@@ -243,19 +219,20 @@ export default function CreateStore() {
             <div>
               <label>Service Types Sit In</label>
               <input {...register("servicetypes.sitIn")} />
-              {errors.servicetypes?.message && <p>{errors.servicetypes?.message}</p>}
+              {errors.servicetypes?.message && (
+                <p>{errors.servicetypes?.message}</p>
+              )}
             </div>
-            
 
             <div>
-            <input
-                        id="fileUpload"
-                        type="file"
-                        multiple
-                        accept=".jpg, .png, .gif, .jpeg"
-                        disabled={fileLimit}
-                      ></input>
-            </div>
+              <input
+                id="fileUpload"
+                type="file"
+                multiple
+                accept=".jpg, .png, .gif, .jpeg"
+                disabled={fileLimit}
+              ></input>
+            </div> */}
             <Button type="submit">Submit</Button>
           </form>
         </div>
