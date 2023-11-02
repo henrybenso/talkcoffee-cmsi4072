@@ -2,7 +2,7 @@
 CREATE TYPE "Role" AS ENUM ('BASIC', 'PREMIUM', 'ADMIN');
 
 -- CreateEnum
-CREATE TYPE "StoreTypes" AS ENUM ('CAFE', 'BAR');
+CREATE TYPE "DineTypes" AS ENUM ('CAFE', 'BAR');
 
 -- CreateTable
 CREATE TABLE "User" (
@@ -10,7 +10,7 @@ CREATE TABLE "User" (
     "email" TEXT NOT NULL,
     "username" TEXT NOT NULL,
     "beans" DOUBLE PRECISION NOT NULL DEFAULT 0.0,
-    "hashedPassword" TEXT NOT NULL,
+    "passwordHash" TEXT NOT NULL,
     "avatar" TEXT,
     "firstName" TEXT,
     "lastName" TEXT,
@@ -30,9 +30,8 @@ CREATE TABLE "Store" (
     "averageRating" DOUBLE PRECISION NOT NULL,
     "ratingCount" INTEGER NOT NULL,
     "phoneNumber" TEXT,
-    "avatar" TEXT,
-    "photos" TEXT[],
     "instagramHandle" TEXT,
+    "avatar" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "serviceTypesId" TEXT NOT NULL,
@@ -75,7 +74,7 @@ CREATE TABLE "ServiceHours" (
 -- CreateTable
 CREATE TABLE "Category" (
     "id" TEXT NOT NULL,
-    "type" "StoreTypes" NOT NULL,
+    "type" "DineTypes"[],
 
     CONSTRAINT "Category_pkey" PRIMARY KEY ("id")
 );

@@ -21,7 +21,7 @@ export const DineTypes: {
 export type DineTypes = (typeof DineTypes)[keyof typeof DineTypes];
 
 type CategoryType = {
-  type: DineTypes;
+  type: DineTypes[];
 };
 
 type ServiceTypesType = {
@@ -59,11 +59,11 @@ type StoreType = {
   serviceHours: ServiceHoursType;
 };
 
-type ImagesType = {
-  publicId: string;
-  format: string;
-  version: string;
-};
+// type ImagesType = {
+//   publicId: string;
+//   format: string;
+//   version: string;
+// };
 
 export async function GET() {
   const result = await prisma.store.findMany();
@@ -78,38 +78,38 @@ export async function POST(request: Request) {
     name,
     averageRating,
     ratingCount,
-    instagramHandle,
     phoneNumber,
+    instagramHandle,
     avatar,
     serviceTypes,
     serviceHours,
   }: StoreType = res;
 
-  const imageUploaded = await getImage(request);
-  let imageDatas = [];
-  imageUploaded.map(async (image) => {
-    const imageData = await uploadImage(image.path);
-    imageDatas.append({
-      publicId: imageData.public_id,
-      format: imageData.format,
-      version: imageData.version.tostring(),
-    });
-  });
+  // const imageUploaded = await getImage(request);
+  // let imageDatas = [];
+  // imageUploaded.map(async (image) => {
+  //   const imageData = await uploadImage(image.path);
+  //   imageDatas.append({
+  //     publicId: imageData.public_id,
+  //     format: imageData.format,
+  //     version: imageData.version.tostring(),
+  //   });
+  // });
 
   const result = await prisma.store.create({
     data: {
       name,
       averageRating,
       ratingCount,
-      instagramHandle,
       phoneNumber,
+      instagramHandle,
       avatar,
-      images: {
-        createMany: {
-          data: imageDatas,
-          skipDuplicates: true,
-        },
-      },
+      // images: {
+      //   createMany: {
+      //     data: imageDatas,
+      //     skipDuplicates: true,
+      //   },
+      // },
       serviceTypes: {
         create: {
           sitIn: {
