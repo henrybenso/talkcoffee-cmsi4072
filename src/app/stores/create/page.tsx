@@ -5,14 +5,9 @@ import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { buttonVariants } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { ratingOptions } from "./ratings";
-import { useForm, SubmitHandler, Controller } from "react-hook-form";
-import Select from "react-select";
+import { useForm } from "react-hook-form";
 import validator from "validator";
-import { SetStateAction, useState } from "react";
-import RatingButton from "./ratingButton";
-import * as Label from "@radix-ui/react-label";
+import {useState } from "react";
 
 const dineOptions = [
   { value: "CAFE", label: "sit in" },
@@ -23,8 +18,28 @@ const dineOptions = [
 const VALUES = ["CAFE", "BAR"] as const;
 const schema = z.object({
   name: z.string().min(1, { message: "Required" }),
-  rating: z.number({ required_error: "A rating is required." }).gte(1).lte(5),
-  phoneNumber: z.string().refine(validator.isMobilePhone).optional(),
+  rating: z.string().transform((val, ctx) => {
+    const parsed = parseInt(val)
+    if (isNaN(parsed)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Not a number",
+      });
+      return z.NEVER;
+    }
+    if (parsed < 1 || parsed > 5) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Number is less than 1 or larger than 5"
+      })
+      return z.NEVER
+    }
+    return parsed;
+  }),
+  phoneNumber: z.string().refine((val) => validator.isMobilePhone(val), (val) => ({
+    message: "Phone Nubmer is not valid"
+  })),
+  // phoneNumber: z.string().regex(new RegExp("^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]\d{3}[\s.-]\d{4}$")),
   instagramHandle: z.string().optional(),
   avatar: z.string().optional(),
   images: z.array(z.string()),
@@ -60,11 +75,18 @@ export default function CreateStore() {
     register,
     handleSubmit,
     formState: { errors },
+    getValues
   } = useForm({
     resolver: zodResolver(schema),
   });
 
-  const onSubmit = (data) => console.log(data);
+  const onSubmit = (data) => {
+    alert(JSON.stringify(data));
+  };
+
+  const handleGetValues = () => {
+    console.log("Get Values", getValues())
+  }
 
   // const [uploadedFiles, setUploadedFiles] = useState([]);
   const [fileLimit, setFileLimit] = useState(false);
@@ -163,7 +185,7 @@ export default function CreateStore() {
           <section>
             <div>
               Are you are store owner? If so,
-              <Link className="ml-2" href="/stores/createByOwner">
+              <Link className="ml-2" href="/stores/create-by-owner">
                 <Button>Click Here!</Button>
               </Link>
             </div>
@@ -172,68 +194,101 @@ export default function CreateStore() {
             </h1>
           </section>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
-            <div className="flex flex-wrap items-center gap-[15px] px-5">
-              <label className="text-[15px] font-medium text-black">
+          {/* <form onSubmit={handleSubmit((d) => console.log(d))} className="space-y-8"> */}
+            <div className="space-y-2">
+              <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                 Store Name
               </label>
               <input
                 className="flex h-10 w-full rounded-md border-2 border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none hover:border-transparent focus:outline-none focus:ring-2 focus:ring-yellow-700 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                 type="text"
-                id="storeName"
-                defaultValue="Blue Bottle Coffee"
+                id="name"
+                placeholder="Blue Bottle Coffee"
+                {...register("name")}
               />
             </div>
-            <div className="flex flex-wrap items-center gap-[15px] px-5">
-              <label className="text-[15px] font-medium leading-[35px] text-black">
+            <div className="space-y-2">
+              <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                Rating ⭐
+              </label>
+              <select className="flex h-10 w-2/12 rounded-md border-2 border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none hover:border-transparent focus:outline-none focus:ring-2 focus:ring-yellow-700 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50" id="rating" {...register("rating")}>
+              <option disabled selected></option>
+                <option value="5">5</option>
+                <option value="4">4</option>
+                <option value="3">3</option>
+                <option value="2">2</option>
+                <option value="1">1</option>
+              </select>
+              <div className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+              {errors.rating?.message && <p>{errors.rating?.message}</p>}
+              </div>
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                Phone Number
+              </label>
+              <input
+                className="flex h-10 w-full rounded-md border-2 border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none hover:border-transparent focus:outline-none focus:ring-2 focus:ring-yellow-700 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                type="text"
+                id="phoneNumber"
+                placeholder="(666)-666-6666"
+                {...register("phoneNumber")}
+              />
+              <div className="text-destructive">
+              {errors.phoneNumber?.message && <p>{errors.phoneNumber?.message}</p>}
+              </div>
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                 Instagram
               </label>
               <input
                 className="flex h-10 w-full rounded-md border-2 border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none hover:border-transparent focus:outline-none focus:ring-2 focus:ring-yellow-700 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                 type="text"
-                id="instagram"
-                defaultValue="@"
+                id="instagramHandle"
+                placeholder="@"
+                {...register("instagramHandle")}
               />
             </div>
-            {/* <div>
-              <label>Rating</label>
-              <input {...register("rating")} />
-              {errors.rating?.message && <p>{errors.rating?.message}</p>}
-            </div>
-            <div>
-              <label>Instagram</label>
-              <input {...register("instagram")} />
-              {errors.instagram?.message && <p>{errors.instagram?.message}</p>}
-            </div>
-            <div>
-              <label>Phone Number</label>
-              <input {...register("phoneNumber")} />
-              {errors.phoneNumber?.message && (
-                <p>{errors.phoneNumber?.message}</p>
-              )}
-            </div>
-            <div>
-              <label>avatar</label>
-              <input {...register("avatar")} />
-              {errors.avatar?.message && <p>{errors.avatar?.message}</p>}
-            </div>
-            <div>
-              <label>Service Types Sit In</label>
-              <input {...register("servicetypes.sitIn")} />
-              {errors.servicetypes?.message && (
-                <p>{errors.servicetypes?.message}</p>
-              )}
-            </div>
-
-            <div>
+            <div className="space-y-2">
+              <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                Avatar
+              </label>
               <input
-                id="fileUpload"
+              className="block w-full text-sm text-slate-500
+              file:mr-4 file:py-2 file:px-4
+              file:rounded-full file:border-0
+              file:text-sm file:font-semibold
+              file:bg-violet-50 file:bg-transparent
+              hover:file:bg-violet-100"
+                              id="avatar"
+                              type="file"
+                              accept=".jpg, .png, .gif, .jpeg"
+                              {...register("avatar")}
+              />
+            </div>
+            
+
+            <div className="space-y-2">
+            <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                Images
+              </label>
+              <input className="block w-full text-sm text-slate-500
+              file:mr-4 file:py-2 file:px-4
+              file:rounded-full file:border-0
+              file:text-sm file:font-semibold
+              file:bg-violet-50 file:bg-transparent
+              hover:file:bg-violet-100"
+                id="images"
                 type="file"
                 multiple
                 accept=".jpg, .png, .gif, .jpeg"
                 disabled={fileLimit}
-              ></input>
-            </div> */}
+                {...register("images")}
+              />
+            </div>
             <Button type="submit">Submit</Button>
+            <button type="button" onClick={handleGetValues}>Get values</button>
           </form>
         </div>
       </Layout>
