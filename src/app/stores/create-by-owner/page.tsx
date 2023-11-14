@@ -1,12 +1,13 @@
 "use client";
+
 import Layout from "../../layout";
 import Link from "next/link";
+import validator from "validator";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { buttonVariants } from "@/components/ui/button";
 import { Controller, useForm } from "react-hook-form";
-import validator from "validator";
 import { useState } from "react";
 import Select from "react-select";
 
@@ -15,28 +16,38 @@ const dineOptions = [
   { value: "BAR", label: "bar" },
 ];
 
-const hoursOptions = [{ value: "" }];
+const SUN = ["SUN"] as const;
+const MON = ["MON"] as const;
+const TUES = ["TUES"] as const;
+const WED = ["WED"] as const;
+const TR = ["TR"] as const;
+const FRI = ["FRI"] as const;
+const SAT = ["SAT"] as const;
+const DAYS = ["SUN", "MON", "TUE", "WED", "TR", "FRI", "SAT"] as const;
 const VALUES = ["CAFE", "BAR"] as const;
+const ratinglike = z.string();
+const ratingliketoNumber = ratinglike.pipe(z.coerce.number());
 const schema = z.object({
   name: z.string().min(1, { message: "Required" }),
-  rating: z.string().transform((val, ctx) => {
-    const parsed = parseInt(val);
-    if (isNaN(parsed)) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Not a number",
-      });
-      return z.NEVER;
-    }
-    if (parsed < 1 || parsed > 5) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Number is less than 1 or larger than 5",
-      });
-      return z.NEVER;
-    }
-    return parsed;
-  }),
+  rating: ratingliketoNumber,
+  // rating: z.string().transform((val, ctx) => {
+  //   const parsed = parseInt(val);
+  //   if (isNaN(parsed)) {
+  //     ctx.addIssue({
+  //       code: z.ZodIssueCode.custom,
+  //       message: "Not a number",
+  //     });
+  //     return z.NEVER;
+  //   }
+  //   if (parsed < 1 || parsed > 5) {
+  //     ctx.addIssue({
+  //       code: z.ZodIssueCode.custom,
+  //       message: "Number is less than 1 or larger than 5",
+  //     });
+  //     return z.NEVER;
+  //   }
+  //   return parsed;
+  // }),
   phoneNumber: z.string().refine(
     (val) => validator.isMobilePhone(val),
     (val) => ({
@@ -46,30 +57,79 @@ const schema = z.object({
   // phoneNumber: z.string().regex(new RegExp("^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]\d{3}[\s.-]\d{4}$")),
   instagramHandle: z.string().optional(),
   avatar: z.string(),
-  images: z.array(z.string()),
+  // images: z.array(z.string()),
   serviceTypes: z
     .object({
-      sitInEnum: z.array(z.enum(VALUES)),
+      sitIn: z.array(z.enum(VALUES)),
       takeOut: z.boolean(),
       delivery: z.boolean(),
     })
     .required(),
   serviceHours: z
     .object({
-      mondayOpen: z.date(),
-      mondayClose: z.date(),
-      tuesdayOpen: z.date(),
-      tuesdayClose: z.date(),
-      wednesdayOpen: z.date(),
-      wednesdayClose: z.date(),
-      thursdayOpen: z.date(),
-      thursdayClose: z.date(),
-      fridayOpen: z.date(),
-      fridayClose: z.date(),
-      saturdayOpen: z.date(),
-      saturdayClose: z.date(),
-      sundayOpen: z.date(),
-      sundayClose: z.date(),
+      sunday: z
+        .object({
+          open: z.string().datetime(),
+          close: z.string().datetime(),
+        })
+        .refine((data) => data.open !== data.close, {
+          message: "Times cannot be the same value!",
+        })
+        .optional(),
+      monday: z
+        .object({
+          open: z.string().datetime(),
+          close: z.string().datetime(),
+        })
+        .refine((data) => data.open !== data.close, {
+          message: "Times cannot be the same value!",
+        })
+        .optional(),
+      tuesday: z
+        .object({
+          open: z.string().datetime(),
+          close: z.string().datetime(),
+        })
+        .refine((data) => data.open !== data.close, {
+          message: "Times cannot be the same value!",
+        })
+        .optional(),
+      wednesday: z
+        .object({
+          open: z.string().datetime(),
+          close: z.string().datetime(),
+        })
+        .refine((data) => data.open !== data.close, {
+          message: "Times cannot be the same value!",
+        })
+        .optional(),
+      thursday: z
+        .object({
+          open: z.string().datetime(),
+          close: z.string().datetime(),
+        })
+        .refine((data) => data.open !== data.close, {
+          message: "Times cannot be the same value!",
+        })
+        .optional(),
+      friday: z
+        .object({
+          open: z.string().datetime(),
+          close: z.string().datetime(),
+        })
+        .refine((data) => data.open !== data.close, {
+          message: "Times cannot be the same value!",
+        })
+        .optional(),
+      saturday: z
+        .object({
+          open: z.string().datetime(),
+          close: z.string().datetime(),
+        })
+        .refine((data) => data.open !== data.close, {
+          message: "Times cannot be the same value!",
+        })
+        .optional(),
     })
     .required(),
 });
@@ -86,9 +146,9 @@ export default function CreateStore() {
     resolver: zodResolver(schema),
   });
 
-  const onSubmit = (data: any) => {
-    alert(JSON.stringify(data));
-  };
+  // const _onSubmit = (data: any) => {
+  //   alert(JSON.stringify(data));
+  // };
 
   const handleGetValues = () => {
     console.log("Get Values", getValues());
@@ -120,60 +180,40 @@ export default function CreateStore() {
   //   handleUploadFiles(chosenFiles);
   // };
 
-  // const form = useForm<z.infer<typeof formSchema>>({
-  //   resolver: zodResolver(formSchema),
-  //   defaultValues: {
-  //     name: "",
-  //     rating: undefined,
-  //     phoneNumber: "",
-  //     instagramHandle: "",
-  //     avatar: "",
-  //     images: [],
-  //     serviceTypes: {
-  //       sitInEnum: "CAFE",
-  //       takeOut: false,
-  //       delivery: false,
-  //     },
-  //     serviceHours: {
-  //       mondayOpen: new Date(),
-  //       mondayClose: new Date(),
-  //       tuesdayOpen: new Date(),
-  //       tuesdayClose: new Date(),
-  //       wednesdayOpen: new Date(),
-  //       wednesdayClose: new Date(),
-  //       thursdayOpen: new Date(),
-  //       thursdayClose: new Date(),
-  //       fridayOpen: new Date(),
-  //       fridayClose: new Date(),
-  //       saturdayOpen: new Date(),
-  //       saturdayClose: new Date(),
-  //       sundayOpen: new Date(),
-  //       sundayClose: new Date(),
-  //     },
-  //   },
-  // });
+  async function onSubmit(values: z.infer<typeof schema>) {
+    const {
+      name,
+      rating,
+      phoneNumber,
+      instagramHandle,
+      avatar,
+      // images,
+      serviceTypes,
+      serviceHours,
+    } = values;
 
-  // async function onSubmit(values: z.infer<typeof schema>) {
-  //   const { name, rating, instagramHandle, avatar, images, serviceTypes } =
-  //     values;
+    const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
-  //   const res = await fetch("http://localhost:3000/api/store", {
-  //     method: "POST",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //     },
-  //     body: JSON.stringify({
-  //       name,
-  //       rating,
-  //       instagramHandle,
-  //       avatar,
-  //       images,
-  //       serviceTypes,
-  //     }),
-  //   });
+    const res = await fetch("http://localhost:3000/api/store", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name,
+        rating,
+        phoneNumber,
+        instagramHandle,
+        avatar,
+        // images,
+        serviceTypes,
+        serviceHours,
+        timezone,
+      }),
+    });
 
-  //   const data = await res.json();
-  // }
+    const data = await res.json();
+  }
 
   return (
     <>
@@ -216,6 +256,34 @@ export default function CreateStore() {
                 {errors.name?.message && <p>{errors.name?.message}</p>}
               </div>
             </div>
+            <div className="space-y-2">
+              <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                Rating ⭐
+              </label>
+              <Controller
+                name="rating"
+                control={control}
+                render={({ field }) => {
+                  return (
+                    <select
+                      className="flex h-10 w-2/12 rounded-md border-2 border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none hover:border-transparent focus:outline-none focus:ring-2 focus:ring-yellow-700 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                      {...field}
+                    >
+                      <option disabled selected></option>
+                      <option value="5">5</option>
+                      <option value="4">4</option>
+                      <option value="3">3</option>
+                      <option value="2">2</option>
+                      <option value="1">1</option>
+                    </select>
+                  );
+                }}
+              />
+              <div className="text-destructive text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                {errors.rating?.message && <p>{errors.rating?.message}</p>}
+              </div>
+            </div>
+
             <div className="space-y-2">
               <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                 Phone Number
@@ -301,7 +369,7 @@ export default function CreateStore() {
               </div>
             </div>
 
-            <div className="space-y-2">
+            {/* <div className="space-y-2">
               <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                 Images
               </label>
@@ -330,25 +398,30 @@ hover:file:bg-violet-100"
               <div className="text-destructive text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                 {errors.images?.message && <p>{errors.images?.message}</p>}
               </div>
-            </div>
+            </div> */}
             <div className="space-y-2">
               <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                 What kind of store is it?
               </label>
               <Controller
-                name="serviceTypes.shape.sitIn"
+                name="serviceTypes.sitIn"
                 control={control}
                 render={({ field }) => (
                   <Select {...field} isMulti options={dineOptions} />
                 )}
               />
+              <div className="text-destructive text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                {errors.serviceTypes?.message && (
+                  <p>{errors.serviceTypes?.message}</p>
+                )}
+              </div>
             </div>
             <div className="space-y-2">
               <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                Is order pickup an option?
+                Pickup
               </label>
               <Controller
-                name="serviceTypes.shape.takeOut"
+                name="serviceTypes.takeOut"
                 control={control}
                 render={({ field }) => (
                   <Select
@@ -363,15 +436,14 @@ hover:file:bg-violet-100"
             </div>
             <div className="space-y-2">
               <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                Is delivery an option?
+                Delivery
               </label>
               <Controller
-                name="serviceTypes.shape.delivery"
+                name="serviceTypes.delivery"
                 control={control}
                 render={({ field }) => (
                   <Select
                     {...field}
-                    isMulti
                     options={[
                       { value: true, label: "Yes" },
                       { value: false, label: "No" },
@@ -380,10 +452,285 @@ hover:file:bg-violet-100"
                 )}
               />
             </div>
+
+            <div className="space-y-2">
+              <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                Sunday
+              </label>
+              <Controller
+                name="serviceHours.sunday.open"
+                control={control}
+                render={({ field }) => (
+                  <div>
+                    <label className="pr-4 text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                      Open
+                    </label>
+                    <input
+                      className="h-10 rounded-md border-2 border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none hover:border-transparent focus:outline-none focus:ring-2 focus:ring-yellow-700 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                      type="time"
+                      id="sunday"
+                      {...field}
+                    />
+                  </div>
+                )}
+              />
+              <Controller
+                name="serviceHours.sunday.close"
+                control={control}
+                render={({ field }) => (
+                  <div>
+                    <label className="pr-4 text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                      Close
+                    </label>
+                    <input
+                      className="h-10 rounded-md border-2 border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none hover:border-transparent focus:outline-none focus:ring-2 focus:ring-yellow-700 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                      type="time"
+                      id="sunday"
+                      {...field}
+                    />
+                  </div>
+                )}
+              />
+            </div>
+
             <div className="space-y-2">
               <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                 Monday
               </label>
+              <Controller
+                name="serviceHours.monday.open"
+                control={control}
+                render={({ field }) => (
+                  <div>
+                    <label className="pr-4 text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                      Open
+                    </label>
+                    <input
+                      className="h-10 rounded-md border-2 border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none hover:border-transparent focus:outline-none focus:ring-2 focus:ring-yellow-700 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                      type="time"
+                      id="monday"
+                      {...field}
+                    />
+                  </div>
+                )}
+              />
+              <Controller
+                name="serviceHours.monday.close"
+                control={control}
+                render={({ field }) => (
+                  <div>
+                    <label className="pr-4 text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                      Close
+                    </label>
+                    <input
+                      className="h-10 rounded-md border-2 border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none hover:border-transparent focus:outline-none focus:ring-2 focus:ring-yellow-700 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                      type="time"
+                      id="monday"
+                      {...field}
+                    />
+                  </div>
+                )}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                Tuesday
+              </label>
+              <Controller
+                name="serviceHours.tuesday.open"
+                control={control}
+                render={({ field }) => (
+                  <div>
+                    <label className="pr-4 text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                      Open
+                    </label>
+                    <input
+                      className="h-10 rounded-md border-2 border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none hover:border-transparent focus:outline-none focus:ring-2 focus:ring-yellow-700 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                      type="time"
+                      id="tuesday"
+                      {...field}
+                    />
+                  </div>
+                )}
+              />
+              <Controller
+                name="serviceHours.tuesday.close"
+                control={control}
+                render={({ field }) => (
+                  <div>
+                    <label className="pr-4 text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                      Close
+                    </label>
+                    <input
+                      className="h-10 rounded-md border-2 border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none hover:border-transparent focus:outline-none focus:ring-2 focus:ring-yellow-700 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                      type="time"
+                      id="tuesday"
+                      {...field}
+                    />
+                  </div>
+                )}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                Wednesday
+              </label>
+              <Controller
+                name="serviceHours.wednesday.open"
+                control={control}
+                render={({ field }) => (
+                  <div>
+                    <label className="pr-4 text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                      Open
+                    </label>
+                    <input
+                      className="h-10 rounded-md border-2 border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none hover:border-transparent focus:outline-none focus:ring-2 focus:ring-yellow-700 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                      type="time"
+                      id="wednesday"
+                      {...field}
+                    />
+                  </div>
+                )}
+              />
+              <Controller
+                name="serviceHours.wednesday.close"
+                control={control}
+                render={({ field }) => (
+                  <div>
+                    <label className="pr-4 text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                      Close
+                    </label>
+                    <input
+                      className="h-10 rounded-md border-2 border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none hover:border-transparent focus:outline-none focus:ring-2 focus:ring-yellow-700 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                      type="time"
+                      id="wednesday"
+                      {...field}
+                    />
+                  </div>
+                )}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                Thursday
+              </label>
+              <Controller
+                name="serviceHours.thursday.open"
+                control={control}
+                render={({ field }) => (
+                  <div>
+                    <label className="pr-4 text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                      Open
+                    </label>
+                    <input
+                      className="h-10 rounded-md border-2 border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none hover:border-transparent focus:outline-none focus:ring-2 focus:ring-yellow-700 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                      type="time"
+                      id="thursday"
+                      {...field}
+                    />
+                  </div>
+                )}
+              />
+              <Controller
+                name="serviceHours.thursday.close"
+                control={control}
+                render={({ field }) => (
+                  <div>
+                    <label className="pr-4 text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                      Close
+                    </label>
+                    <input
+                      className="h-10 rounded-md border-2 border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none hover:border-transparent focus:outline-none focus:ring-2 focus:ring-yellow-700 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                      type="time"
+                      id="thursday"
+                      {...field}
+                    />
+                  </div>
+                )}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                Friday
+              </label>
+              <Controller
+                name="serviceHours.friday.open"
+                control={control}
+                render={({ field }) => (
+                  <div>
+                    <label className="pr-4 text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                      Open
+                    </label>
+                    <input
+                      className="h-10 rounded-md border-2 border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none hover:border-transparent focus:outline-none focus:ring-2 focus:ring-yellow-700 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                      type="time"
+                      id="friday"
+                      {...field}
+                    />
+                  </div>
+                )}
+              />
+              <Controller
+                name="serviceHours.friday.close"
+                control={control}
+                render={({ field }) => (
+                  <div>
+                    <label className="pr-4 text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                      Close
+                    </label>
+                    <input
+                      className="h-10 rounded-md border-2 border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none hover:border-transparent focus:outline-none focus:ring-2 focus:ring-yellow-700 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                      type="time"
+                      id="friday"
+                      {...field}
+                    />
+                  </div>
+                )}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                Saturday
+              </label>
+              <Controller
+                name="serviceHours.saturday.open"
+                control={control}
+                render={({ field }) => (
+                  <div>
+                    <label className="pr-4 text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                      Open
+                    </label>
+                    <input
+                      className="h-10 rounded-md border-2 border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none hover:border-transparent focus:outline-none focus:ring-2 focus:ring-yellow-700 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                      type="time"
+                      id="saturday"
+                      {...field}
+                    />
+                  </div>
+                )}
+              />
+              <Controller
+                name="serviceHours.saturday.close"
+                control={control}
+                render={({ field }) => (
+                  <div>
+                    <label className="pr-4 text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                      Close
+                    </label>
+                    <input
+                      className="h-10 rounded-md border-2 border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none hover:border-transparent focus:outline-none focus:ring-2 focus:ring-yellow-700 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                      type="time"
+                      id="saturday"
+                      {...field}
+                    />
+                  </div>
+                )}
+              />
             </div>
 
             <Button type="submit">Submit</Button>

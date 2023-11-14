@@ -29,64 +29,52 @@ model User {
 }
 
 model Store {
-  id              String       @id @default(uuid())
+  id              String         @id @default(uuid())
   name            String
   averageRating   Float
   ratingCount     Int
   phoneNumber     String?
   instagramHandle String?
   avatar          String
-  images          Image[]
-  createdAt       DateTime     @default(now())
-  updatedAt       DateTime     @updatedAt
-  serviceTypes    ServiceTypes @relation(fields: [serviceTypesId], references: [id])
-  serviceTypesId  String       @unique
-  serviceHours    ServiceHours @relation(fields: [serviceHoursId], references: [id])
-  serviceHoursId  String       @unique
+  // images          Image[]
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+  serviceTypes    ServiceTypes   @relation(fields: [serviceTypesId], references: [id])
+  serviceTypesId  String         @unique
+  serviceHours    ServiceHours[]
 }
 
 model ServiceTypes {
-  id       String   @id @default(uuid())
-  sitIn    Category @relation(fields: [sitInId], references: [id])
-  sitInId  String   @unique
+  id       String      @id @default(uuid())
+  sitIn    DineTypes[]
   takeOut  Boolean
   delivery Boolean
   Store    Store?
 }
 
 model ServiceHours {
-  id             String   @id @default(uuid())
-  mondayOpen     DateTime
-  mondayClose    DateTime
-  tuesdayOpen    DateTime
-  tuesdayClose   DateTime
-  wednesdayOpen  DateTime
-  wednesdayClose DateTime
-  thursdayOpen   DateTime
-  thursdayClose  DateTime
-  fridayOpen     DateTime
-  fridayClose    DateTime
-  saturdayOpen   DateTime
-  saturdayClose  DateTime
-  sundayOpen     DateTime
-  sundayClose    DateTime
-  Store          Store?
+  id      String   @id @default(uuid())
+  day     Days
+  open    DateTime
+  close   DateTime
+  Store   Store    @relation(fields: [storeId], references: [id])
+  storeId String
 }
 
-model Category {
-  id           String        @id @default(uuid())
-  type         DineTypes[]
-  serviceTypes ServiceTypes?
-}
+// model Category {
+//   id           String        @id @default(uuid())
+//   type         DineTypes[]
+//   serviceTypes ServiceTypes?
+// }
 
-model Image {
-  id       String @id @default(cuid())
-  publicId String @unique
-  format   String
-  version  String
-  Store    Store  @relation(fields: [storeId], references: [id])
-  storeId  String
-}
+// model Image {
+//   id       String @id @default(cuid())
+//   publicId String @unique
+//   format   String
+//   version  String
+//   Store    Store  @relation(fields: [storeId], references: [id])
+//   storeId  String
+// }
 
 enum Role {
   BASIC
@@ -97,4 +85,14 @@ enum Role {
 enum DineTypes {
   CAFE
   BAR
+}
+
+enum Days {
+  SUN
+  MON
+  TUE
+  WED
+  TR
+  FRI
+  SAT
 }
