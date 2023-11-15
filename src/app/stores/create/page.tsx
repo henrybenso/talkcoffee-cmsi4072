@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { buttonVariants } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
 import validator from "validator";
-import {useState } from "react";
+import { useState } from "react";
 
 const dineOptions = [
   { value: "CAFE", label: "sit in" },
@@ -19,7 +19,7 @@ const VALUES = ["CAFE", "BAR"] as const;
 const schema = z.object({
   name: z.string().min(1, { message: "Required" }),
   rating: z.string().transform((val, ctx) => {
-    const parsed = parseInt(val)
+    const parsed = parseInt(val);
     if (isNaN(parsed)) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
@@ -30,15 +30,18 @@ const schema = z.object({
     if (parsed < 1 || parsed > 5) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message: "Number is less than 1 or larger than 5"
-      })
-      return z.NEVER
+        message: "Number is less than 1 or larger than 5",
+      });
+      return z.NEVER;
     }
     return parsed;
   }),
-  phoneNumber: z.string().refine((val) => validator.isMobilePhone(val), (val) => ({
-    message: "Phone Nubmer is not valid"
-  })),
+  phoneNumber: z.string().refine(
+    (val) => validator.isMobilePhone(val),
+    (val) => ({
+      message: "Phone Nubmer is not valid",
+    })
+  ),
   // phoneNumber: z.string().regex(new RegExp("^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]\d{3}[\s.-]\d{4}$")),
   instagramHandle: z.string().optional(),
   avatar: z.string().optional(),
@@ -75,7 +78,7 @@ export default function CreateStore() {
     register,
     handleSubmit,
     formState: { errors },
-    getValues
+    getValues,
   } = useForm({
     resolver: zodResolver(schema),
   });
@@ -85,8 +88,8 @@ export default function CreateStore() {
   };
 
   const handleGetValues = () => {
-    console.log("Get Values", getValues())
-  }
+    console.log("Get Values", getValues());
+  };
 
   // const [uploadedFiles, setUploadedFiles] = useState([]);
   const [fileLimit, setFileLimit] = useState(false);
@@ -194,7 +197,7 @@ export default function CreateStore() {
             </h1>
           </section>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
-          {/* <form onSubmit={handleSubmit((d) => console.log(d))} className="space-y-8"> */}
+            {/* <form onSubmit={handleSubmit((d) => console.log(d))} className="space-y-8"> */}
             <div className="space-y-2">
               <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                 Store Name
@@ -211,8 +214,12 @@ export default function CreateStore() {
               <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                 Rating ⭐
               </label>
-              <select className="flex h-10 w-2/12 rounded-md border-2 border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none hover:border-transparent focus:outline-none focus:ring-2 focus:ring-yellow-700 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50" id="rating" {...register("rating")}>
-              <option disabled selected></option>
+              <select
+                className="flex h-10 w-2/12 rounded-md border-2 border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none hover:border-transparent focus:outline-none focus:ring-2 focus:ring-yellow-700 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                id="rating"
+                {...register("rating")}
+              >
+                <option disabled selected></option>
                 <option value="5">5</option>
                 <option value="4">4</option>
                 <option value="3">3</option>
@@ -220,7 +227,7 @@ export default function CreateStore() {
                 <option value="1">1</option>
               </select>
               <div className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-              {errors.rating?.message && <p>{errors.rating?.message}</p>}
+                {errors.rating?.message && <p>{errors.rating?.message}</p>}
               </div>
             </div>
             <div className="space-y-2">
@@ -235,7 +242,9 @@ export default function CreateStore() {
                 {...register("phoneNumber")}
               />
               <div className="text-destructive">
-              {errors.phoneNumber?.message && <p>{errors.phoneNumber?.message}</p>}
+                {errors.phoneNumber?.message && (
+                  <p>{errors.phoneNumber?.message}</p>
+                )}
               </div>
             </div>
             <div className="space-y-2">
@@ -255,25 +264,25 @@ export default function CreateStore() {
                 Avatar
               </label>
               <input
-              className="block w-full text-sm text-slate-500
+                className="block w-full text-sm text-slate-500
               file:mr-4 file:py-2 file:px-4
               file:rounded-full file:border-0
               file:text-sm file:font-semibold
               file:bg-violet-50 file:bg-transparent
               hover:file:bg-violet-100"
-                              id="avatar"
-                              type="file"
-                              accept=".jpg, .png, .gif, .jpeg"
-                              {...register("avatar")}
+                id="avatar"
+                type="file"
+                accept=".jpg, .png, .gif, .jpeg"
+                {...register("avatar")}
               />
             </div>
-            
 
             <div className="space-y-2">
-            <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+              <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                 Images
               </label>
-              <input className="block w-full text-sm text-slate-500
+              <input
+                className="block w-full text-sm text-slate-500
               file:mr-4 file:py-2 file:px-4
               file:rounded-full file:border-0
               file:text-sm file:font-semibold
@@ -288,7 +297,9 @@ export default function CreateStore() {
               />
             </div>
             <Button type="submit">Submit</Button>
-            <button type="button" onClick={handleGetValues}>Get values</button>
+            <button type="button" onClick={handleGetValues}>
+              Get values
+            </button>
           </form>
         </div>
       </Layout>
