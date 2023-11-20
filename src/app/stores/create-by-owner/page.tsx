@@ -16,20 +16,13 @@ const dineOptions = [
   { value: "BAR", label: "bar" },
 ];
 
-const SUN = ["SUN"] as const;
-const MON = ["MON"] as const;
-const TUES = ["TUES"] as const;
-const WED = ["WED"] as const;
-const TR = ["TR"] as const;
-const FRI = ["FRI"] as const;
-const SAT = ["SAT"] as const;
-const DAYS = ["SUN", "MON", "TUE", "WED", "TR", "FRI", "SAT"] as const;
-const VALUES = ["CAFE", "BAR"] as const;
-const ratinglike = z.string();
-const ratingliketoNumber = ratinglike.pipe(z.coerce.number());
+const REG = /^([01]?[0-9]|2[0-3]):[0-5][0-9]$/;
+
+const ratingToNumber = z.number().or(z.string()).pipe(z.coerce.number());
 const schema = z.object({
   name: z.string().min(1, { message: "Required" }),
-  rating: ratingliketoNumber,
+  rating: z.string(),
+  //   rating: ratingToNumber,
   // rating: z.string().transform((val, ctx) => {
   //   const parsed = parseInt(val);
   //   if (isNaN(parsed)) {
@@ -58,80 +51,86 @@ const schema = z.object({
   instagramHandle: z.string().optional(),
   avatar: z.string(),
   // images: z.array(z.string()),
-  serviceTypes: z
-    .object({
-      sitIn: z.array(z.enum(VALUES)),
-      takeOut: z.boolean(),
-      delivery: z.boolean(),
+  sitIn: z.array(
+    z.object({
+      label: z.string(),
+      value: z.string(),
     })
-    .required(),
-  serviceHours: z
-    .object({
-      sunday: z
-        .object({
-          open: z.string().datetime(),
-          close: z.string().datetime(),
-        })
-        .refine((data) => data.open !== data.close, {
-          message: "Times cannot be the same value!",
-        })
-        .optional(),
-      monday: z
-        .object({
-          open: z.string().datetime(),
-          close: z.string().datetime(),
-        })
-        .refine((data) => data.open !== data.close, {
-          message: "Times cannot be the same value!",
-        })
-        .optional(),
-      tuesday: z
-        .object({
-          open: z.string().datetime(),
-          close: z.string().datetime(),
-        })
-        .refine((data) => data.open !== data.close, {
-          message: "Times cannot be the same value!",
-        })
-        .optional(),
-      wednesday: z
-        .object({
-          open: z.string().datetime(),
-          close: z.string().datetime(),
-        })
-        .refine((data) => data.open !== data.close, {
-          message: "Times cannot be the same value!",
-        })
-        .optional(),
-      thursday: z
-        .object({
-          open: z.string().datetime(),
-          close: z.string().datetime(),
-        })
-        .refine((data) => data.open !== data.close, {
-          message: "Times cannot be the same value!",
-        })
-        .optional(),
-      friday: z
-        .object({
-          open: z.string().datetime(),
-          close: z.string().datetime(),
-        })
-        .refine((data) => data.open !== data.close, {
-          message: "Times cannot be the same value!",
-        })
-        .optional(),
-      saturday: z
-        .object({
-          open: z.string().datetime(),
-          close: z.string().datetime(),
-        })
-        .refine((data) => data.open !== data.close, {
-          message: "Times cannot be the same value!",
-        })
-        .optional(),
-    })
-    .required(),
+  ),
+  takeOut: z.object({
+    label: z.string(),
+    value: z.boolean(),
+  }),
+  delivery: z.object({
+    label: z.string(),
+    value: z.boolean(),
+  }),
+  curbsidePickup: z.object({
+    label: z.string(),
+    value: z.boolean(),
+  }),
+  //   serviceTypes: z
+  //     .object({
+  //       sitIn: z.array(z.enum(VALUES)),
+  //       takeOut: z.boolean(),
+  //       delivery: z.boolean(),
+  //     })
+  //     .required(),
+  sunday: z.object({
+    open: z.union([z.string().length(0), z.string().regex(new RegExp(REG))]),
+    close: z.union([z.string().length(0), z.string().regex(new RegExp(REG))]),
+  }),
+  // .refine(
+  //   (data) =>
+  //     data.open !== "" && data.close !== "" && data.open === data.close,
+  //   {
+  //     message: "Times cannot be the same value!",
+  //     path: ["sunday"],
+  //     params: { open: "Times cannot be the same value!" },
+  //   }
+  // ),
+  monday: z.object({
+    open: z.union([z.string().length(0), z.string().regex(new RegExp(REG))]),
+    close: z.union([z.string().length(0), z.string().regex(new RegExp(REG))]),
+  }),
+  // .refine((data) => data.open !== "" && data.open === data.close, {
+  //   message: "Times cannot be the same value!",
+  // })
+  tuesday: z.object({
+    open: z.union([z.string().length(0), z.string().regex(new RegExp(REG))]),
+    close: z.union([z.string().length(0), z.string().regex(new RegExp(REG))]),
+  }),
+  // .refine((data) => data.open !== "" && data.open === data.close, {
+  //   message: "Times cannot be the same value!",
+  // })
+  wednesday: z.object({
+    open: z.union([z.string().length(0), z.string().regex(new RegExp(REG))]),
+    close: z.union([z.string().length(0), z.string().regex(new RegExp(REG))]),
+  }),
+  // .refine((data) => data.open !== "" && data.open === data.close, {
+  //   message: "Times cannot be the same value!",
+  // })
+  thursday: z.object({
+    open: z.union([z.string().length(0), z.string().regex(new RegExp(REG))]),
+    close: z.union([z.string().length(0), z.string().regex(new RegExp(REG))]),
+  }),
+  // .refine((data) => data.open !== "" && data.open === data.close, {
+  //   message: "Times cannot be the same value!",
+  // })
+  friday: z.object({
+    open: z.union([z.string().length(0), z.string().regex(new RegExp(REG))]),
+    close: z.union([z.string().length(0), z.string().regex(new RegExp(REG))]),
+  }),
+  // .refine((data) => data.open !== "" && data.open === data.close, {
+  //   message: "Times cannot be the same value!",
+  // })
+  saturday: z.object({
+    open: z.union([z.string().length(0), z.string().regex(new RegExp(REG))]),
+    close: z.union([z.string().length(0), z.string().regex(new RegExp(REG))]),
+  }),
+  // .refine((data) => data.open !== "" && data.open === data.close, {
+  //   message: "Times cannot be the same value!",
+  // })
 });
 
 // const MAX_COUNT = 5;
@@ -144,6 +143,45 @@ export default function CreateStore() {
     getValues,
   } = useForm({
     resolver: zodResolver(schema),
+    defaultValues: {
+      name: "",
+      rating: "5",
+      phoneNumber: "",
+      instagramHandle: "",
+      avatar: "",
+      sitIn: [dineOptions[0]],
+      takeOut: { value: false, label: "No" },
+      delivery: { value: false, label: "No" },
+      curbsidePickup: { value: false, label: "No" },
+      sunday: {
+        open: "",
+        close: "",
+      },
+      monday: {
+        open: "",
+        close: "",
+      },
+      tuesday: {
+        open: "",
+        close: "",
+      },
+      wednesday: {
+        open: "",
+        close: "",
+      },
+      thursday: {
+        open: "",
+        close: "",
+      },
+      friday: {
+        open: "",
+        close: "",
+      },
+      saturday: {
+        open: "",
+        close: "",
+      },
+    },
   });
 
   // const _onSubmit = (data: any) => {
@@ -156,6 +194,7 @@ export default function CreateStore() {
 
   // const [uploadedFiles, setUploadedFiles] = useState([]);
   const [fileLimit, setFileLimit] = useState(false);
+  const selectUniqueId = Date.now().toString();
 
   // const handleUploadFiles = (files) => {
   //   const uploaded = [...uploadedFiles];
@@ -181,6 +220,7 @@ export default function CreateStore() {
   // };
 
   async function onSubmit(values: z.infer<typeof schema>) {
+    console.log("HI");
     const {
       name,
       rating,
@@ -188,9 +228,19 @@ export default function CreateStore() {
       instagramHandle,
       avatar,
       // images,
-      serviceTypes,
-      serviceHours,
+      sitIn,
+      takeOut,
+      delivery,
+      curbsidePickup,
+      sunday,
+      monday,
+      tuesday,
+      thursday,
+      friday,
+      saturday,
     } = values;
+
+    console.log("no");
 
     const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
@@ -206,8 +256,16 @@ export default function CreateStore() {
         instagramHandle,
         avatar,
         // images,
-        serviceTypes,
-        serviceHours,
+        sitIn,
+        takeOut,
+        delivery,
+        curbsidePickup,
+        sunday,
+        monday,
+        tuesday,
+        thursday,
+        friday,
+        saturday,
         timezone,
       }),
     });
@@ -269,7 +327,6 @@ export default function CreateStore() {
                       className="flex h-10 w-2/12 rounded-md border-2 border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none hover:border-transparent focus:outline-none focus:ring-2 focus:ring-yellow-700 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                       {...field}
                     >
-                      <option disabled selected></option>
                       <option value="5">5</option>
                       <option value="4">4</option>
                       <option value="3">3</option>
@@ -332,8 +389,8 @@ export default function CreateStore() {
                 It's not required, but we recommend you include it!
               </p>
               <div className="text-destructive text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                {errors.instagram?.message && (
-                  <p>{errors.instagram?.message}</p>
+                {errors.instagramHandle?.message && (
+                  <p>{errors.instagramHandle?.message}</p>
                 )}
               </div>
             </div>
@@ -399,29 +456,33 @@ hover:file:bg-violet-100"
                 {errors.images?.message && <p>{errors.images?.message}</p>}
               </div>
             </div> */}
+
             <div className="space-y-2">
               <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                 What kind of store is it?
               </label>
               <Controller
-                name="serviceTypes.sitIn"
+                name="sitIn"
                 control={control}
                 render={({ field }) => (
-                  <Select {...field} isMulti options={dineOptions} />
+                  <Select
+                    {...field}
+                    isMulti
+                    options={dineOptions}
+                    instanceId={selectUniqueId}
+                  />
                 )}
               />
-              <div className="text-destructive text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                {errors.serviceTypes?.message && (
-                  <p>{errors.serviceTypes?.message}</p>
-                )}
-              </div>
+              {/* <div className="text-destructive text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                {errors.sitIn?.message && <p>{errors.sitIn?.message}</p>}
+              </div> */}
             </div>
             <div className="space-y-2">
               <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                 Pickup
               </label>
               <Controller
-                name="serviceTypes.takeOut"
+                name="takeOut"
                 control={control}
                 render={({ field }) => (
                   <Select
@@ -439,7 +500,7 @@ hover:file:bg-violet-100"
                 Delivery
               </label>
               <Controller
-                name="serviceTypes.delivery"
+                name="delivery"
                 control={control}
                 render={({ field }) => (
                   <Select
@@ -452,13 +513,30 @@ hover:file:bg-violet-100"
                 )}
               />
             </div>
-
+            <div className="space-y-2">
+              <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                Curbside Pickup
+              </label>
+              <Controller
+                name="curbsidePickup"
+                control={control}
+                render={({ field }) => (
+                  <Select
+                    {...field}
+                    options={[
+                      { value: true, label: "Yes" },
+                      { value: false, label: "No" },
+                    ]}
+                  />
+                )}
+              />
+            </div>
             <div className="space-y-2">
               <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                 Sunday
               </label>
               <Controller
-                name="serviceHours.sunday.open"
+                name="sunday.open"
                 control={control}
                 render={({ field }) => (
                   <div>
@@ -468,14 +546,18 @@ hover:file:bg-violet-100"
                     <input
                       className="h-10 rounded-md border-2 border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none hover:border-transparent focus:outline-none focus:ring-2 focus:ring-yellow-700 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                       type="time"
-                      id="sunday"
                       {...field}
                     />
                   </div>
                 )}
               />
+              <div className="text-destructive text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                {errors.sunday?.open?.message && (
+                  <p>{errors.sunday?.open?.message}</p>
+                )}
+              </div>
               <Controller
-                name="serviceHours.sunday.close"
+                name="sunday.close"
                 control={control}
                 render={({ field }) => (
                   <div>
@@ -485,12 +567,16 @@ hover:file:bg-violet-100"
                     <input
                       className="h-10 rounded-md border-2 border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none hover:border-transparent focus:outline-none focus:ring-2 focus:ring-yellow-700 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                       type="time"
-                      id="sunday"
                       {...field}
                     />
                   </div>
                 )}
               />
+              <div className="text-destructive text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                {errors.sunday?.close?.message && (
+                  <p>{errors.sunday?.close?.message}</p>
+                )}
+              </div>
             </div>
 
             <div className="space-y-2">
@@ -498,7 +584,7 @@ hover:file:bg-violet-100"
                 Monday
               </label>
               <Controller
-                name="serviceHours.monday.open"
+                name="monday.open"
                 control={control}
                 render={({ field }) => (
                   <div>
@@ -508,14 +594,18 @@ hover:file:bg-violet-100"
                     <input
                       className="h-10 rounded-md border-2 border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none hover:border-transparent focus:outline-none focus:ring-2 focus:ring-yellow-700 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                       type="time"
-                      id="monday"
                       {...field}
                     />
                   </div>
                 )}
               />
+              <div className="text-destructive text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                {errors.monday?.open?.message && (
+                  <p>{errors.monday?.open?.message}</p>
+                )}
+              </div>
               <Controller
-                name="serviceHours.monday.close"
+                name="monday.close"
                 control={control}
                 render={({ field }) => (
                   <div>
@@ -525,12 +615,16 @@ hover:file:bg-violet-100"
                     <input
                       className="h-10 rounded-md border-2 border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none hover:border-transparent focus:outline-none focus:ring-2 focus:ring-yellow-700 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                       type="time"
-                      id="monday"
                       {...field}
                     />
                   </div>
                 )}
               />
+              <div className="text-destructive text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                {errors.monday?.close?.message && (
+                  <p>{errors.monday?.close?.message}</p>
+                )}
+              </div>
             </div>
 
             <div className="space-y-2">
@@ -538,7 +632,7 @@ hover:file:bg-violet-100"
                 Tuesday
               </label>
               <Controller
-                name="serviceHours.tuesday.open"
+                name="tuesday.open"
                 control={control}
                 render={({ field }) => (
                   <div>
@@ -548,14 +642,13 @@ hover:file:bg-violet-100"
                     <input
                       className="h-10 rounded-md border-2 border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none hover:border-transparent focus:outline-none focus:ring-2 focus:ring-yellow-700 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                       type="time"
-                      id="tuesday"
                       {...field}
                     />
                   </div>
                 )}
               />
               <Controller
-                name="serviceHours.tuesday.close"
+                name="tuesday.close"
                 control={control}
                 render={({ field }) => (
                   <div>
@@ -565,7 +658,6 @@ hover:file:bg-violet-100"
                     <input
                       className="h-10 rounded-md border-2 border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none hover:border-transparent focus:outline-none focus:ring-2 focus:ring-yellow-700 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                       type="time"
-                      id="tuesday"
                       {...field}
                     />
                   </div>
@@ -578,7 +670,7 @@ hover:file:bg-violet-100"
                 Wednesday
               </label>
               <Controller
-                name="serviceHours.wednesday.open"
+                name="wednesday.open"
                 control={control}
                 render={({ field }) => (
                   <div>
@@ -588,14 +680,13 @@ hover:file:bg-violet-100"
                     <input
                       className="h-10 rounded-md border-2 border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none hover:border-transparent focus:outline-none focus:ring-2 focus:ring-yellow-700 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                       type="time"
-                      id="wednesday"
                       {...field}
                     />
                   </div>
                 )}
               />
               <Controller
-                name="serviceHours.wednesday.close"
+                name="wednesday.close"
                 control={control}
                 render={({ field }) => (
                   <div>
@@ -605,7 +696,6 @@ hover:file:bg-violet-100"
                     <input
                       className="h-10 rounded-md border-2 border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none hover:border-transparent focus:outline-none focus:ring-2 focus:ring-yellow-700 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                       type="time"
-                      id="wednesday"
                       {...field}
                     />
                   </div>
@@ -618,7 +708,7 @@ hover:file:bg-violet-100"
                 Thursday
               </label>
               <Controller
-                name="serviceHours.thursday.open"
+                name="thursday.open"
                 control={control}
                 render={({ field }) => (
                   <div>
@@ -628,14 +718,13 @@ hover:file:bg-violet-100"
                     <input
                       className="h-10 rounded-md border-2 border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none hover:border-transparent focus:outline-none focus:ring-2 focus:ring-yellow-700 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                       type="time"
-                      id="thursday"
                       {...field}
                     />
                   </div>
                 )}
               />
               <Controller
-                name="serviceHours.thursday.close"
+                name="thursday.close"
                 control={control}
                 render={({ field }) => (
                   <div>
@@ -645,7 +734,6 @@ hover:file:bg-violet-100"
                     <input
                       className="h-10 rounded-md border-2 border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none hover:border-transparent focus:outline-none focus:ring-2 focus:ring-yellow-700 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                       type="time"
-                      id="thursday"
                       {...field}
                     />
                   </div>
@@ -658,7 +746,7 @@ hover:file:bg-violet-100"
                 Friday
               </label>
               <Controller
-                name="serviceHours.friday.open"
+                name="friday.open"
                 control={control}
                 render={({ field }) => (
                   <div>
@@ -668,14 +756,13 @@ hover:file:bg-violet-100"
                     <input
                       className="h-10 rounded-md border-2 border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none hover:border-transparent focus:outline-none focus:ring-2 focus:ring-yellow-700 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                       type="time"
-                      id="friday"
                       {...field}
                     />
                   </div>
                 )}
               />
               <Controller
-                name="serviceHours.friday.close"
+                name="friday.close"
                 control={control}
                 render={({ field }) => (
                   <div>
@@ -685,7 +772,6 @@ hover:file:bg-violet-100"
                     <input
                       className="h-10 rounded-md border-2 border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none hover:border-transparent focus:outline-none focus:ring-2 focus:ring-yellow-700 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                       type="time"
-                      id="friday"
                       {...field}
                     />
                   </div>
@@ -698,7 +784,7 @@ hover:file:bg-violet-100"
                 Saturday
               </label>
               <Controller
-                name="serviceHours.saturday.open"
+                name="saturday.open"
                 control={control}
                 render={({ field }) => (
                   <div>
@@ -708,14 +794,13 @@ hover:file:bg-violet-100"
                     <input
                       className="h-10 rounded-md border-2 border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none hover:border-transparent focus:outline-none focus:ring-2 focus:ring-yellow-700 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                       type="time"
-                      id="saturday"
                       {...field}
                     />
                   </div>
                 )}
               />
               <Controller
-                name="serviceHours.saturday.close"
+                name="saturday.close"
                 control={control}
                 render={({ field }) => (
                   <div>
@@ -725,7 +810,6 @@ hover:file:bg-violet-100"
                     <input
                       className="h-10 rounded-md border-2 border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none hover:border-transparent focus:outline-none focus:ring-2 focus:ring-yellow-700 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                       type="time"
-                      id="saturday"
                       {...field}
                     />
                   </div>

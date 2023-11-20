@@ -86,12 +86,22 @@ type StoreType = {
 //   version: string;
 // };
 
-// var moment = require('moment-timezone');
-
 export async function GET() {
   const result = await prisma.store.findMany();
   return NextResponse.json({ result });
 }
+
+// export async function GET(request: Request) {
+//   const query = req. 
+//   const result = await prisma.store.findMany({
+//     where: {
+//       name: {
+//         contains
+//       }
+//     }
+//   });
+//   return NextResponse.json({ result });
+// }
 
 export async function POST(request: Request) {
   const res = await request.json();
@@ -134,7 +144,7 @@ export async function POST(request: Request) {
 
   const keys = Object.keys(serviceHours)
 
-  let newServiceHours = []
+  const newServiceHours = []
   // console.log(newServiceHours)
 
 

@@ -45,11 +45,12 @@ model Store {
 }
 
 model ServiceTypes {
-  id       String      @id @default(uuid())
-  sitIn    DineTypes[]
-  takeOut  Boolean
-  delivery Boolean
-  Store    Store?
+  id             String      @id @default(uuid())
+  sitIn          DineTypes[]
+  takeOut        Boolean
+  delivery       Boolean
+  curbsidePickup Boolean
+  Store          Store?
 }
 
 model ServiceHours {
