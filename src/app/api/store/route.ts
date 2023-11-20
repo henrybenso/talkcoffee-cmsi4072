@@ -42,10 +42,15 @@ export const DineTypes: {
 
 export type DineTypes = (typeof DineTypes)[keyof typeof DineTypes];
 
-type CategoryType = {
+type SitInType = {
   value: DineTypes
   label: string
 };
+
+type OutDineType = {
+  value: boolean
+  label: string
+}
 
 type HoursType = {
   open: string
@@ -53,9 +58,10 @@ type HoursType = {
 }
 
 type ServiceTypesType = {
-  sitIn: CategoryType[];
-  takeOut: boolean;
-  delivery: boolean;
+  sitIn: SitInType[];
+  takeOut: OutDineType;
+  delivery: OutDineType
+  curbsidePickup: OutDineType;
 };
 
 type ServiceHoursType = {
@@ -154,7 +160,7 @@ export async function POST(request: Request) {
 
   keys.forEach(key => {
     let currentDay = serviceHours[key as keyof ServiceHoursType]
-    if (currentDay.open !== null && currentDay.open !== null) {
+    if (currentDay.open !== "" && currentDay.open !== "") {
       currentDay.day = (Days as Days)[key]
 
       let formattedCloseDate = currentDate.concat(" ", currentDay.close)
@@ -208,8 +214,9 @@ export async function POST(request: Request) {
       serviceTypes: {
         create: {
           sitIn: sitInValues,
-          takeOut: serviceTypes.takeOut,
-          delivery: serviceTypes.delivery,
+          takeOut: serviceTypes.takeOut.value,
+          delivery: serviceTypes.delivery.value,
+          curbsidePickup: serviceTypes.curbsidePickup.value,
         },
       },
       serviceHours: {

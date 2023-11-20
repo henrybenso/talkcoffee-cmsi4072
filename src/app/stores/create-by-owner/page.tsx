@@ -17,6 +17,7 @@ const dineOptions = [
 ];
 
 const REG = /^([01]?[0-9]|2[0-3]):[0-5][0-9]$/;
+const VALUES = ["CAFE", "BAR"] as const;
 
 const ratingToNumber = z.number().or(z.string()).pipe(z.coerce.number());
 const schema = z.object({
@@ -51,23 +52,25 @@ const schema = z.object({
   instagramHandle: z.string().optional(),
   avatar: z.string(),
   // images: z.array(z.string()),
-  sitIn: z.array(
-    z.object({
+  serviceTypes: z.object({
+    sitIn: z.array(
+      z.object({
+        label: z.string(),
+        value: z.enum(VALUES),
+      })
+    ),
+    takeOut: z.object({
       label: z.string(),
-      value: z.string(),
-    })
-  ),
-  takeOut: z.object({
-    label: z.string(),
-    value: z.boolean(),
-  }),
-  delivery: z.object({
-    label: z.string(),
-    value: z.boolean(),
-  }),
-  curbsidePickup: z.object({
-    label: z.string(),
-    value: z.boolean(),
+      value: z.boolean(),
+    }),
+    delivery: z.object({
+      label: z.string(),
+      value: z.boolean(),
+    }),
+    curbsidePickup: z.object({
+      label: z.string(),
+      value: z.boolean(),
+    }),
   }),
   //   serviceTypes: z
   //     .object({
@@ -76,61 +79,63 @@ const schema = z.object({
   //       delivery: z.boolean(),
   //     })
   //     .required(),
-  sunday: z.object({
-    open: z.union([z.string().length(0), z.string().regex(new RegExp(REG))]),
-    close: z.union([z.string().length(0), z.string().regex(new RegExp(REG))]),
+  serviceHours: z.object({
+    sunday: z.object({
+      open: z.union([z.string().length(0), z.string().regex(new RegExp(REG))]),
+      close: z.union([z.string().length(0), z.string().regex(new RegExp(REG))]),
+    }),
+    // .refine(
+    //   (data) =>
+    //     data.open !== "" && data.close !== "" && data.open === data.close,
+    //   {
+    //     message: "Times cannot be the same value!",
+    //     path: ["sunday"],
+    //     params: { open: "Times cannot be the same value!" },
+    //   }
+    // ),
+    monday: z.object({
+      open: z.union([z.string().length(0), z.string().regex(new RegExp(REG))]),
+      close: z.union([z.string().length(0), z.string().regex(new RegExp(REG))]),
+    }),
+    // .refine((data) => data.open !== "" && data.open === data.close, {
+    //   message: "Times cannot be the same value!",
+    // })
+    tuesday: z.object({
+      open: z.union([z.string().length(0), z.string().regex(new RegExp(REG))]),
+      close: z.union([z.string().length(0), z.string().regex(new RegExp(REG))]),
+    }),
+    // .refine((data) => data.open !== "" && data.open === data.close, {
+    //   message: "Times cannot be the same value!",
+    // })
+    wednesday: z.object({
+      open: z.union([z.string().length(0), z.string().regex(new RegExp(REG))]),
+      close: z.union([z.string().length(0), z.string().regex(new RegExp(REG))]),
+    }),
+    // .refine((data) => data.open !== "" && data.open === data.close, {
+    //   message: "Times cannot be the same value!",
+    // })
+    thursday: z.object({
+      open: z.union([z.string().length(0), z.string().regex(new RegExp(REG))]),
+      close: z.union([z.string().length(0), z.string().regex(new RegExp(REG))]),
+    }),
+    // .refine((data) => data.open !== "" && data.open === data.close, {
+    //   message: "Times cannot be the same value!",
+    // })
+    friday: z.object({
+      open: z.union([z.string().length(0), z.string().regex(new RegExp(REG))]),
+      close: z.union([z.string().length(0), z.string().regex(new RegExp(REG))]),
+    }),
+    // .refine((data) => data.open !== "" && data.open === data.close, {
+    //   message: "Times cannot be the same value!",
+    // })
+    saturday: z.object({
+      open: z.union([z.string().length(0), z.string().regex(new RegExp(REG))]),
+      close: z.union([z.string().length(0), z.string().regex(new RegExp(REG))]),
+    }),
+    // .refine((data) => data.open !== "" && data.open === data.close, {
+    //   message: "Times cannot be the same value!",
+    // })
   }),
-  // .refine(
-  //   (data) =>
-  //     data.open !== "" && data.close !== "" && data.open === data.close,
-  //   {
-  //     message: "Times cannot be the same value!",
-  //     path: ["sunday"],
-  //     params: { open: "Times cannot be the same value!" },
-  //   }
-  // ),
-  monday: z.object({
-    open: z.union([z.string().length(0), z.string().regex(new RegExp(REG))]),
-    close: z.union([z.string().length(0), z.string().regex(new RegExp(REG))]),
-  }),
-  // .refine((data) => data.open !== "" && data.open === data.close, {
-  //   message: "Times cannot be the same value!",
-  // })
-  tuesday: z.object({
-    open: z.union([z.string().length(0), z.string().regex(new RegExp(REG))]),
-    close: z.union([z.string().length(0), z.string().regex(new RegExp(REG))]),
-  }),
-  // .refine((data) => data.open !== "" && data.open === data.close, {
-  //   message: "Times cannot be the same value!",
-  // })
-  wednesday: z.object({
-    open: z.union([z.string().length(0), z.string().regex(new RegExp(REG))]),
-    close: z.union([z.string().length(0), z.string().regex(new RegExp(REG))]),
-  }),
-  // .refine((data) => data.open !== "" && data.open === data.close, {
-  //   message: "Times cannot be the same value!",
-  // })
-  thursday: z.object({
-    open: z.union([z.string().length(0), z.string().regex(new RegExp(REG))]),
-    close: z.union([z.string().length(0), z.string().regex(new RegExp(REG))]),
-  }),
-  // .refine((data) => data.open !== "" && data.open === data.close, {
-  //   message: "Times cannot be the same value!",
-  // })
-  friday: z.object({
-    open: z.union([z.string().length(0), z.string().regex(new RegExp(REG))]),
-    close: z.union([z.string().length(0), z.string().regex(new RegExp(REG))]),
-  }),
-  // .refine((data) => data.open !== "" && data.open === data.close, {
-  //   message: "Times cannot be the same value!",
-  // })
-  saturday: z.object({
-    open: z.union([z.string().length(0), z.string().regex(new RegExp(REG))]),
-    close: z.union([z.string().length(0), z.string().regex(new RegExp(REG))]),
-  }),
-  // .refine((data) => data.open !== "" && data.open === data.close, {
-  //   message: "Times cannot be the same value!",
-  // })
 });
 
 // const MAX_COUNT = 5;
@@ -149,37 +154,41 @@ export default function CreateStore() {
       phoneNumber: "",
       instagramHandle: "",
       avatar: "",
-      sitIn: [dineOptions[0]],
-      takeOut: { value: false, label: "No" },
-      delivery: { value: false, label: "No" },
-      curbsidePickup: { value: false, label: "No" },
-      sunday: {
-        open: "",
-        close: "",
+      serviceTypes: {
+        sitIn: [dineOptions[0]],
+        takeOut: { value: false, label: "No" },
+        delivery: { value: false, label: "No" },
+        curbsidePickup: { value: false, label: "No" },
       },
-      monday: {
-        open: "",
-        close: "",
-      },
-      tuesday: {
-        open: "",
-        close: "",
-      },
-      wednesday: {
-        open: "",
-        close: "",
-      },
-      thursday: {
-        open: "",
-        close: "",
-      },
-      friday: {
-        open: "",
-        close: "",
-      },
-      saturday: {
-        open: "",
-        close: "",
+      serviceHours: {
+        sunday: {
+          open: "",
+          close: "",
+        },
+        monday: {
+          open: "",
+          close: "",
+        },
+        tuesday: {
+          open: "",
+          close: "",
+        },
+        wednesday: {
+          open: "",
+          close: "",
+        },
+        thursday: {
+          open: "",
+          close: "",
+        },
+        friday: {
+          open: "",
+          close: "",
+        },
+        saturday: {
+          open: "",
+          close: "",
+        },
       },
     },
   });
@@ -228,16 +237,8 @@ export default function CreateStore() {
       instagramHandle,
       avatar,
       // images,
-      sitIn,
-      takeOut,
-      delivery,
-      curbsidePickup,
-      sunday,
-      monday,
-      tuesday,
-      thursday,
-      friday,
-      saturday,
+      serviceTypes,
+      serviceHours,
     } = values;
 
     console.log("no");
@@ -256,21 +257,14 @@ export default function CreateStore() {
         instagramHandle,
         avatar,
         // images,
-        sitIn,
-        takeOut,
-        delivery,
-        curbsidePickup,
-        sunday,
-        monday,
-        tuesday,
-        thursday,
-        friday,
-        saturday,
+        serviceTypes,
+        serviceHours,
         timezone,
       }),
     });
 
     const data = await res.json();
+    console.log(data);
   }
 
   return (
@@ -462,7 +456,7 @@ hover:file:bg-violet-100"
                 What kind of store is it?
               </label>
               <Controller
-                name="sitIn"
+                name="serviceTypes.sitIn"
                 control={control}
                 render={({ field }) => (
                   <Select
@@ -482,7 +476,7 @@ hover:file:bg-violet-100"
                 Pickup
               </label>
               <Controller
-                name="takeOut"
+                name="serviceTypes.takeOut"
                 control={control}
                 render={({ field }) => (
                   <Select
@@ -500,7 +494,7 @@ hover:file:bg-violet-100"
                 Delivery
               </label>
               <Controller
-                name="delivery"
+                name="serviceTypes.delivery"
                 control={control}
                 render={({ field }) => (
                   <Select
@@ -518,7 +512,7 @@ hover:file:bg-violet-100"
                 Curbside Pickup
               </label>
               <Controller
-                name="curbsidePickup"
+                name="serviceTypes.curbsidePickup"
                 control={control}
                 render={({ field }) => (
                   <Select
@@ -536,7 +530,7 @@ hover:file:bg-violet-100"
                 Sunday
               </label>
               <Controller
-                name="sunday.open"
+                name="serviceHours.sunday.open"
                 control={control}
                 render={({ field }) => (
                   <div>
@@ -551,13 +545,13 @@ hover:file:bg-violet-100"
                   </div>
                 )}
               />
-              <div className="text-destructive text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+              {/* <div className="text-destructive text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                 {errors.sunday?.open?.message && (
                   <p>{errors.sunday?.open?.message}</p>
                 )}
-              </div>
+              </div> */}
               <Controller
-                name="sunday.close"
+                name="serviceHours.sunday.close"
                 control={control}
                 render={({ field }) => (
                   <div>
@@ -572,11 +566,11 @@ hover:file:bg-violet-100"
                   </div>
                 )}
               />
-              <div className="text-destructive text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+              {/* <div className="text-destructive text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                 {errors.sunday?.close?.message && (
                   <p>{errors.sunday?.close?.message}</p>
                 )}
-              </div>
+              </div> */}
             </div>
 
             <div className="space-y-2">
@@ -584,7 +578,7 @@ hover:file:bg-violet-100"
                 Monday
               </label>
               <Controller
-                name="monday.open"
+                name="serviceHours.monday.open"
                 control={control}
                 render={({ field }) => (
                   <div>
@@ -599,13 +593,13 @@ hover:file:bg-violet-100"
                   </div>
                 )}
               />
-              <div className="text-destructive text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+              {/* <div className="text-destructive text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                 {errors.monday?.open?.message && (
                   <p>{errors.monday?.open?.message}</p>
                 )}
-              </div>
+              </div> */}
               <Controller
-                name="monday.close"
+                name="serviceHours.monday.close"
                 control={control}
                 render={({ field }) => (
                   <div>
@@ -620,11 +614,11 @@ hover:file:bg-violet-100"
                   </div>
                 )}
               />
-              <div className="text-destructive text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+              {/* <div className="text-destructive text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                 {errors.monday?.close?.message && (
                   <p>{errors.monday?.close?.message}</p>
                 )}
-              </div>
+              </div> */}
             </div>
 
             <div className="space-y-2">
@@ -632,7 +626,7 @@ hover:file:bg-violet-100"
                 Tuesday
               </label>
               <Controller
-                name="tuesday.open"
+                name="serviceHours.tuesday.open"
                 control={control}
                 render={({ field }) => (
                   <div>
@@ -648,7 +642,7 @@ hover:file:bg-violet-100"
                 )}
               />
               <Controller
-                name="tuesday.close"
+                name="serviceHours.tuesday.close"
                 control={control}
                 render={({ field }) => (
                   <div>
@@ -670,7 +664,7 @@ hover:file:bg-violet-100"
                 Wednesday
               </label>
               <Controller
-                name="wednesday.open"
+                name="serviceHours.wednesday.open"
                 control={control}
                 render={({ field }) => (
                   <div>
@@ -686,7 +680,7 @@ hover:file:bg-violet-100"
                 )}
               />
               <Controller
-                name="wednesday.close"
+                name="serviceHours.wednesday.close"
                 control={control}
                 render={({ field }) => (
                   <div>
@@ -708,7 +702,7 @@ hover:file:bg-violet-100"
                 Thursday
               </label>
               <Controller
-                name="thursday.open"
+                name="serviceHours.thursday.open"
                 control={control}
                 render={({ field }) => (
                   <div>
@@ -724,7 +718,7 @@ hover:file:bg-violet-100"
                 )}
               />
               <Controller
-                name="thursday.close"
+                name="serviceHours.thursday.close"
                 control={control}
                 render={({ field }) => (
                   <div>
@@ -746,7 +740,7 @@ hover:file:bg-violet-100"
                 Friday
               </label>
               <Controller
-                name="friday.open"
+                name="serviceHours.friday.open"
                 control={control}
                 render={({ field }) => (
                   <div>
@@ -762,7 +756,7 @@ hover:file:bg-violet-100"
                 )}
               />
               <Controller
-                name="friday.close"
+                name="serviceHours.friday.close"
                 control={control}
                 render={({ field }) => (
                   <div>
@@ -784,7 +778,7 @@ hover:file:bg-violet-100"
                 Saturday
               </label>
               <Controller
-                name="saturday.open"
+                name="serviceHours.saturday.open"
                 control={control}
                 render={({ field }) => (
                   <div>
@@ -800,7 +794,7 @@ hover:file:bg-violet-100"
                 )}
               />
               <Controller
-                name="saturday.close"
+                name="serviceHours.saturday.close"
                 control={control}
                 render={({ field }) => (
                   <div>
