@@ -166,8 +166,6 @@ export default function CreateStore() {
 
     console.log("no");
 
-    // const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-
     const formData = new FormData();
     console.log(avatar[0]);
     formData.append("avatar", avatar[0]);
