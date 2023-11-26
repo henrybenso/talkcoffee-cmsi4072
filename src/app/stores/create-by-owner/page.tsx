@@ -2,6 +2,7 @@
 
 import Layout from "../../layout";
 import Link from "next/link";
+import Router from "next/router";
 import validator from "validator";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -10,138 +11,39 @@ import { buttonVariants } from "@/components/ui/button";
 import { Controller, useForm } from "react-hook-form";
 import { useState } from "react";
 import Select from "react-select";
+import { VALUES, schema } from "@/app/validation";
 
+interface Days {
+  sunday: "SUN";
+  monday: "MON";
+  tuesday: "TUE";
+  wednesday: "WED";
+  thursday: "TR";
+  friday: "FRI";
+  saturday: "SAT";
+}
+export const Days = {
+  sunday: "SUN",
+  monday: "MON",
+  tuesday: "TUE",
+  wednesday: "WED",
+  thursday: "TR",
+  friday: "FRI",
+  saturday: "SAT",
+};
+
+enum sitInValue {
+  cafe = "CAFE",
+  bar = "BAR",
+}
 const dineOptions = [
   { value: "CAFE", label: "sit in" },
   { value: "BAR", label: "bar" },
 ];
 
-const REG = /^([01]?[0-9]|2[0-3]):[0-5][0-9]$/;
-const VALUES = ["CAFE", "BAR"] as const;
-
-const ratingToNumber = z.number().or(z.string()).pipe(z.coerce.number());
-const schema = z.object({
-  name: z.string().min(1, { message: "Required" }),
-  rating: z.string(),
-  //   rating: ratingToNumber,
-  // rating: z.string().transform((val, ctx) => {
-  //   const parsed = parseInt(val);
-  //   if (isNaN(parsed)) {
-  //     ctx.addIssue({
-  //       code: z.ZodIssueCode.custom,
-  //       message: "Not a number",
-  //     });
-  //     return z.NEVER;
-  //   }
-  //   if (parsed < 1 || parsed > 5) {
-  //     ctx.addIssue({
-  //       code: z.ZodIssueCode.custom,
-  //       message: "Number is less than 1 or larger than 5",
-  //     });
-  //     return z.NEVER;
-  //   }
-  //   return parsed;
-  // }),
-  phoneNumber: z.string().refine(
-    (val) => validator.isMobilePhone(val),
-    (val) => ({
-      message: `${val}: Phone Nubmer is not valid`,
-    })
-  ),
-  // phoneNumber: z.string().regex(new RegExp("^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]\d{3}[\s.-]\d{4}$")),
-  instagramHandle: z.string().optional(),
-  avatar: z.string(),
-  // images: z.array(z.string()),
-  serviceTypes: z.object({
-    sitIn: z.array(
-      z.object({
-        label: z.string(),
-        value: z.enum(VALUES),
-      })
-    ),
-    takeOut: z.object({
-      label: z.string(),
-      value: z.boolean(),
-    }),
-    delivery: z.object({
-      label: z.string(),
-      value: z.boolean(),
-    }),
-    curbsidePickup: z.object({
-      label: z.string(),
-      value: z.boolean(),
-    }),
-  }),
-  //   serviceTypes: z
-  //     .object({
-  //       sitIn: z.array(z.enum(VALUES)),
-  //       takeOut: z.boolean(),
-  //       delivery: z.boolean(),
-  //     })
-  //     .required(),
-  serviceHours: z.object({
-    sunday: z.object({
-      open: z.union([z.string().length(0), z.string().regex(new RegExp(REG))]),
-      close: z.union([z.string().length(0), z.string().regex(new RegExp(REG))]),
-    }),
-    // .refine(
-    //   (data) =>
-    //     data.open !== "" && data.close !== "" && data.open === data.close,
-    //   {
-    //     message: "Times cannot be the same value!",
-    //     path: ["sunday"],
-    //     params: { open: "Times cannot be the same value!" },
-    //   }
-    // ),
-    monday: z.object({
-      open: z.union([z.string().length(0), z.string().regex(new RegExp(REG))]),
-      close: z.union([z.string().length(0), z.string().regex(new RegExp(REG))]),
-    }),
-    // .refine((data) => data.open !== "" && data.open === data.close, {
-    //   message: "Times cannot be the same value!",
-    // })
-    tuesday: z.object({
-      open: z.union([z.string().length(0), z.string().regex(new RegExp(REG))]),
-      close: z.union([z.string().length(0), z.string().regex(new RegExp(REG))]),
-    }),
-    // .refine((data) => data.open !== "" && data.open === data.close, {
-    //   message: "Times cannot be the same value!",
-    // })
-    wednesday: z.object({
-      open: z.union([z.string().length(0), z.string().regex(new RegExp(REG))]),
-      close: z.union([z.string().length(0), z.string().regex(new RegExp(REG))]),
-    }),
-    // .refine((data) => data.open !== "" && data.open === data.close, {
-    //   message: "Times cannot be the same value!",
-    // })
-    thursday: z.object({
-      open: z.union([z.string().length(0), z.string().regex(new RegExp(REG))]),
-      close: z.union([z.string().length(0), z.string().regex(new RegExp(REG))]),
-    }),
-    // .refine((data) => data.open !== "" && data.open === data.close, {
-    //   message: "Times cannot be the same value!",
-    // })
-    friday: z.object({
-      open: z.union([z.string().length(0), z.string().regex(new RegExp(REG))]),
-      close: z.union([z.string().length(0), z.string().regex(new RegExp(REG))]),
-    }),
-    // .refine((data) => data.open !== "" && data.open === data.close, {
-    //   message: "Times cannot be the same value!",
-    // })
-    saturday: z.object({
-      open: z.union([z.string().length(0), z.string().regex(new RegExp(REG))]),
-      close: z.union([z.string().length(0), z.string().regex(new RegExp(REG))]),
-    }),
-    // .refine((data) => data.open !== "" && data.open === data.close, {
-    //   message: "Times cannot be the same value!",
-    // })
-  }),
-});
-
-// const MAX_COUNT = 5;
-
 export default function CreateStore() {
   const {
+    register,
     control,
     handleSubmit,
     formState: { errors },
@@ -154,6 +56,7 @@ export default function CreateStore() {
       phoneNumber: "",
       instagramHandle: "",
       avatar: "",
+      // images: {},
       serviceTypes: {
         sitIn: [dineOptions[0]],
         takeOut: { value: false, label: "No" },
@@ -193,17 +96,15 @@ export default function CreateStore() {
     },
   });
 
-  // const _onSubmit = (data: any) => {
-  //   alert(JSON.stringify(data));
-  // };
-
-  const handleGetValues = () => {
-    console.log("Get Values", getValues());
-  };
-
-  // const [uploadedFiles, setUploadedFiles] = useState([]);
-  const [fileLimit, setFileLimit] = useState(false);
+  // const [uploadedFiles, setUploadedFiles] = useState();
+  // const [imageUploaded, setImageUploaded] = useState();
+  // const [fileLimit, setFileLimit] = useState(false);
   const selectUniqueId = Date.now().toString();
+
+  // const handleChange = (event) => {
+  //   setImageUploaded(event.target.files[0]);
+  //   console.log(imageUploaded);
+  // };
 
   // const handleUploadFiles = (files) => {
   //   const uploaded = [...uploadedFiles];
@@ -224,11 +125,25 @@ export default function CreateStore() {
   // };
 
   // const handleFileEvent = (e) => {
-  //   const chosenFiles = Array.prototype.slice.call(e.target.files);
-  //   handleUploadFiles(chosenFiles);
+  //   const chosenFiles = Array.prototype.slice.call(e.target.files[0]);
+  //   // console.log(chosenFiles);
+  //   // handleUploadFiles(chosenFiles);
   // };
 
-  async function onSubmit(values: z.infer<typeof schema>) {
+  const handleGetValues = () => {
+    console.log("Get Values", getValues());
+  };
+
+  const _onSubmit = (data: any) => {
+    // alert(JSON.stringify(data));
+    console.log(data);
+  };
+
+  async function submitForm(values: z.infer<typeof schema>) {
+    // e.preventDefault();
+    // if (!imageUploaded) {
+    //   return;
+    // }
     console.log("HI");
     const {
       name,
@@ -241,30 +156,36 @@ export default function CreateStore() {
       serviceHours,
     } = values;
 
+    // let newValues = {
+    //   name: name,
+    //   rating: rating,
+    //   phoneNumber: phoneNumber,
+    //   instagramHandle: instagramHandle,
+    //   serviceTypes: serviceTypes,
+    //   serviceHours: serviceHours,
+    // };
+
     console.log("no");
 
-    const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    // const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
+    const formData = new FormData();
+    console.log(avatar[0]);
+    formData.append("avatar", avatar[0]);
+    // formData.append("avatar", imageUploaded);
+    values = { ...values, avatar: avatar[0].name };
+    formData.append("store", JSON.stringify(values));
+
+    // console.log(formData.values());
+    // for (const value of formData.values()) [console.log(value)];
     const res = await fetch("http://localhost:3000/api/store", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        name,
-        rating,
-        phoneNumber,
-        instagramHandle,
-        avatar,
-        // images,
-        serviceTypes,
-        serviceHours,
-        timezone,
-      }),
+      body: formData,
     });
-
-    const data = await res.json();
-    console.log(data);
+    console.log("banana");
+    // console.log(res);
+    const result = await res.json();
+    console.log(result);
   }
 
   return (
@@ -285,7 +206,7 @@ export default function CreateStore() {
               add your store ☕
             </h1>
           </section>
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+          <form onSubmit={handleSubmit(submitForm)} className="space-y-8">
             <div className="space-y-2">
               <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                 Store Name
@@ -392,25 +313,17 @@ export default function CreateStore() {
               <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                 Avatar
               </label>
-              <Controller
-                name="avatar"
-                control={control}
-                render={({ field }) => {
-                  return (
-                    <input
-                      className="block w-full text-sm text-slate-500
+              <input
+                className="block w-full text-sm text-slate-500
                 file:mr-4 file:py-2 file:px-4
                 file:rounded-full file:border-0
                 file:text-sm file:font-semibold
                 file:bg-violet-50 file:bg-transparent
                 hover:file:bg-violet-100"
-                      id="avatar"
-                      type="file"
-                      accept=".jpg, .png, .gif, .jpeg"
-                      {...field}
-                    />
-                  );
-                }}
+                id="avatar"
+                type="file"
+                accept=".jpg, .png, .gif, .jpeg"
+                {...register("avatar")}
               />
               <p className="text-sm text-muted-foreground">
                 e.g. store logo, company logo, store front
@@ -424,27 +337,21 @@ export default function CreateStore() {
               <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                 Images
               </label>
-              <Controller
-                name="images"
-                control={control}
-                render={({ field }) => {
-                  return (
-                    <input
-                      className="block w-full text-sm text-slate-500
+              <input
+                className="block w-full text-sm text-slate-500
 file:mr-4 file:py-2 file:px-4
 file:rounded-full file:border-0
 file:text-sm file:font-semibold
 file:bg-violet-50 file:bg-transparent
 hover:file:bg-violet-100"
-                      id="images"
-                      type="file"
-                      multiple
-                      accept=".jpg, .png, .gif, .jpeg"
-                      disabled={fileLimit}
-                      {...field}
-                    />
-                  );
-                }}
+                id="images"
+                type="file"
+                multiple
+                accept=".jpg, .png, .gif, .jpeg"
+                disabled={fileLimit}
+                {...register("images")}
+                name="images"
+                // onChange={handleFileEvent}
               />
               <div className="text-destructive text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                 {errors.images?.message && <p>{errors.images?.message}</p>}
