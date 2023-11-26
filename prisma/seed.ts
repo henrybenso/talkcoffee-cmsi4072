@@ -24,7 +24,8 @@
 //                 create: {
 //                     sitIn: [DineTypes.CAFE, DineTypes.BAR],
 //                     takeOut: false,
-//                     delivery: false
+//                     delivery: false,
+//                     curbsidePickup: false
 //                 }
 //             },
 //             serviceHours: {

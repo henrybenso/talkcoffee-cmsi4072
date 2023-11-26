@@ -162,9 +162,6 @@ export async function POST(request: Request) {
   const ratingCount = 1
   const sitInValues: DineTypes[] = []
   const sitIn = storeData.serviceTypes.sitIn
-  // sitInArr.map((obj) => {
-  //     sitInValues.push(DineTypes[obj['value']])
-  // })
 
   const keys = Object.keys(storeData.serviceHours)
   const sitInArr: DineTypes[] = [], serviceHoursArr: { day: Days, open: string, close: string }[] = []
@@ -195,6 +192,7 @@ export async function POST(request: Request) {
   })
 
   console.log("AYOadisjasdigj")
+  //fails after here
   const imageUploaded = await getImage(formData)
 
   // console.log(imageUploaded.path)
