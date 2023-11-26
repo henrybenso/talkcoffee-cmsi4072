@@ -1,3 +1,4 @@
+import * as fs from 'fs'
 const cloudinary = require("cloudinary").v2;
 let streamifier = require('streamifier')
 
@@ -22,15 +23,14 @@ cloudinary.config({
 // }
 
 export async function uploadImage(imageUploaded) {
-  // const byteArrayBuffer = fs.readFileSync(imageUploaded)
+  const byteArrayBuffer = fs.readFileSync(imageUploaded)
   const uploadResult = await new Promise((resolve) => {
-    cloudinary.v2.upload_stream({folder: "avatar"}, function(error, uploadResult) {
-      return resolve(uploadResult);
-      console.log(error, result)
-    })
-
-    streamifier.createReadStream(req.file.buffer).pipe(uploadResult)
-})}
+    cloudinary.v2.uploader.upload_stream((error, uploadResult) => {
+        return resolve(uploadResult);
+    }).end(byteArrayBuffer);
+  });
+  return uploadResult
+}
 
 
 

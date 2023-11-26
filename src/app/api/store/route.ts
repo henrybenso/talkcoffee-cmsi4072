@@ -195,11 +195,11 @@ export async function POST(request: Request) {
   })
 
   console.log("AYOadisjasdigj")
-  // const imageUploaded = await getImage(formData)
+  const imageUploaded = await getImage(formData)
 
   // console.log(imageUploaded.path)
 
-  const imageData = await uploadImage(storeData.avatar)
+  const imageData = await uploadImage(imageUploaded)
 
   console.log("A09EIHRA[09GHER90HJA9-ERHUA-0HREA-H00-H EYEYEYYE")
 
