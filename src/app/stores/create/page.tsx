@@ -1,4 +1,5 @@
 "use client";
+import React, { useState } from "react";
 import Layout from "../../layout";
 import Link from "next/link";
 import * as z from "zod";
@@ -7,7 +8,9 @@ import { Button } from "@/components/ui/button";
 import { buttonVariants } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
 import validator from "validator";
-import { useState } from "react";
+// import { useState } from "react";
+
+const MAX_COUNT = 5;
 
 const dineOptions = [
   { value: "CAFE", label: "sit in" },
@@ -83,6 +86,9 @@ export default function CreateStore() {
     resolver: zodResolver(schema),
   });
 
+  const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
+  const [fileLimit, setFileLimit] = useState<boolean>(false);
+
   const onSubmit = (data) => {
     alert(JSON.stringify(data));
   };
@@ -91,31 +97,42 @@ export default function CreateStore() {
     console.log("Get Values", getValues());
   };
 
-  // const [uploadedFiles, setUploadedFiles] = useState([]);
-  const [fileLimit, setFileLimit] = useState(false);
+  const handleUploadFiles = (files: FileList | null) => {
+    if (!files) return;
 
-  // const handleUploadFiles = (files) => {
-  //   const uploaded = [...uploadedFiles];
-  //   let limitExceeded = false;
-  //   files.some((file) => {
-  //     if (uploaded.findIndex((f) => f.name === file.name) === -1) {
-  //       uploaded.push(file);
-  //       if (uploaded.length == MAX_COUNT) setFileLimit(true);
-  //       if (uploaded.length > MAX_COUNT) {
-  //         alert("You can only add a maximum of ${MAX_COUNT} files");
-  //         setFileLimit(false);
-  //         limitExceeded = true;
-  //       }
-  //     }
-  //   });
+    const uploaded: File[] = [...uploadedFiles];
+    let limitExceeded = false;
 
-  //   if (!limitExceeded) setUploadedFiles(uploaded);
-  // };
+    Array.from(files).forEach((file) => {
+      if (uploaded.every((f) => f.name !== file.name)) {
+        uploaded.push(file);
 
-  // const handleFileEvent = (e) => {
-  //   const chosenFiles = Array.prototype.slice.call(e.target.files);
-  //   handleUploadFiles(chosenFiles);
-  // };
+        // Check if file limit is exceeded
+        if (uploaded.length === MAX_COUNT) {
+          setFileLimit(true);
+          limitExceeded = true;
+        }
+
+        // Display alert if more files are added than allowed
+        if (uploaded.length > MAX_COUNT) {
+          alert(`You can only add a maximum of ${MAX_COUNT} files`);
+          setFileLimit(false);
+          limitExceeded = true;
+        }
+      }
+    });
+
+    if (!limitExceeded) {
+      setUploadedFiles(uploaded);
+    }
+  };
+
+  const handleFileEvent = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const chosenFiles = e.target.files;
+    if (chosenFiles) {
+      handleUploadFiles(chosenFiles);
+    }
+  };
 
   // const form = useForm<z.infer<typeof formSchema>>({
   //   resolver: zodResolver(formSchema),
