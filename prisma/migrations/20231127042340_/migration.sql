@@ -74,6 +74,17 @@ CREATE TABLE "AvatarImage" (
     CONSTRAINT "AvatarImage_pkey" PRIMARY KEY ("id")
 );
 
+-- CreateTable
+CREATE TABLE "Image" (
+    "id" TEXT NOT NULL,
+    "publicId" TEXT NOT NULL,
+    "format" TEXT NOT NULL,
+    "version" TEXT NOT NULL,
+    "storeId" TEXT NOT NULL,
+
+    CONSTRAINT "Image_pkey" PRIMARY KEY ("id")
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 
@@ -92,6 +103,9 @@ CREATE UNIQUE INDEX "Store_serviceTypesId_key" ON "Store"("serviceTypesId");
 -- CreateIndex
 CREATE UNIQUE INDEX "AvatarImage_publicId_key" ON "AvatarImage"("publicId");
 
+-- CreateIndex
+CREATE UNIQUE INDEX "Image_publicId_key" ON "Image"("publicId");
+
 -- AddForeignKey
 ALTER TABLE "Store" ADD CONSTRAINT "Store_avatarImageId_fkey" FOREIGN KEY ("avatarImageId") REFERENCES "AvatarImage"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
@@ -100,3 +114,6 @@ ALTER TABLE "Store" ADD CONSTRAINT "Store_serviceTypesId_fkey" FOREIGN KEY ("ser
 
 -- AddForeignKey
 ALTER TABLE "ServiceHours" ADD CONSTRAINT "ServiceHours_storeId_fkey" FOREIGN KEY ("storeId") REFERENCES "Store"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Image" ADD CONSTRAINT "Image_storeId_fkey" FOREIGN KEY ("storeId") REFERENCES "Store"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

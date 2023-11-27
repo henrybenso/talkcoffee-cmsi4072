@@ -56,7 +56,7 @@ export default function CreateStore() {
       phoneNumber: "",
       instagramHandle: "",
       avatar: "",
-      // images: {},
+      images: "",
       serviceTypes: {
         sitIn: [dineOptions[0]],
         takeOut: { value: false, label: "No" },
@@ -96,15 +96,15 @@ export default function CreateStore() {
     },
   });
 
+  // const [imageUploaded, setImageUploaded] = useState();
   // const [uploadedFiles, setUploadedFiles] = useState();
-  const [imageUploaded, setImageUploaded] = useState();
-  // const [fileLimit, setFileLimit] = useState(false);
+  const [fileLimit, setFileLimit] = useState(false);
   const selectUniqueId = Date.now().toString();
 
-  const handleChange = (event) => {
-    setImageUploaded(event.target.files[0]);
-    console.log(imageUploaded);
-  };
+  // const handleChange = (event) => {
+  //   setImageUploaded(event.target.files[0]);
+  //   console.log(imageUploaded);
+  // };
 
   // const handleUploadFiles = (files) => {
   //   const uploaded = [...uploadedFiles];
@@ -143,34 +143,26 @@ export default function CreateStore() {
     // if (!imageUploaded) {
     //   return;
     // }
-    console.log("HI");
     const {
       name,
       rating,
       phoneNumber,
       instagramHandle,
       avatar,
-      // images,
+      images,
       serviceTypes,
       serviceHours,
     } = values;
 
-    // let newValues = {
-    //   name: name,
-    //   rating: rating,
-    //   phoneNumber: phoneNumber,
-    //   instagramHandle: instagramHandle,
-    //   serviceTypes: serviceTypes,
-    //   serviceHours: serviceHours,
-    // };
-
-    console.log("no");
-
     const formData = new FormData();
     console.log(avatar[0]);
     formData.append("avatar", avatar[0]);
-    // formData.append("avatar", imageUploaded);
-    values = { ...values, avatar: avatar[0].name };
+    formData.append("imageOne", images[0]);
+    formData.append("imageTwo", images[1]);
+    formData.append("imageThree", images[2]);
+    formData.append("imageFour", images[3]);
+    formData.append("imageFive", images[4]);
+    // values = { ...values, avatar: avatar[0].name };
     formData.append("store", JSON.stringify(values));
 
     // console.log(formData.values());
@@ -179,7 +171,6 @@ export default function CreateStore() {
       method: "POST",
       body: formData,
     });
-    console.log("banana");
     // console.log(res);
     const result = await res.json();
     console.log(result);
@@ -330,7 +321,7 @@ export default function CreateStore() {
               </div>
             </div>
 
-            {/* <div className="space-y-2">
+            <div className="space-y-2">
               <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                 Images
               </label>
@@ -353,7 +344,7 @@ hover:file:bg-violet-100"
               <div className="text-destructive text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                 {errors.images?.message && <p>{errors.images?.message}</p>}
               </div>
-            </div> */}
+            </div>
 
             <div className="space-y-2">
               <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">

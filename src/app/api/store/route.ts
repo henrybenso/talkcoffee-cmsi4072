@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import fs from 'fs'
 import { v2 as cloudinary } from 'cloudinary'
 import { prisma } from "../../../../db"
-import { schemaBackend } from "@/app/validation"
+import { schemaStoreBackend } from "@/app/validation"
 
 import moment from "../../../utils/moment-timezone"
 
@@ -124,11 +124,21 @@ export async function POST(request: NextRequest) {
   const storeObj = JSON.parse(String(storeFlat))
 
   const file = formData.get("avatar")
-
   const fileName = (file as File).name;
   const fileBlob = file as Blob
   const filePath = `public/images/uploads/${fileName}`
-  const parse = schemaBackend.safeParse({
+
+  const imageOne = formData.get("imageOne"); const imageTwo = formData.get("imageTwo"); const imageThree = formData.get("imageThree"); const imageFour = formData.get("imageFour"); const imageFive = formData.get("imageFive")
+  console.log(imageOne)
+  console.log(imageTwo)
+  console.log(imageFive)
+
+  const imagesArr = [
+    imageOne, imageTwo, imageThree, imageFour, imageFive
+  ]
+
+
+  const parse = schemaStoreBackend.safeParse({
     name: storeObj["name"],
     rating: storeObj["rating"],
     phoneNumber: storeObj["phoneNumber"],
@@ -144,10 +154,18 @@ export async function POST(request: NextRequest) {
 
   if (!file) {
     return NextResponse.json(
-      { error: "File blob is required." },
+      { error: "Avatar File blob is required." },
       { status: 400 }
     );
   }
+
+  if (!imageOne || !imageTwo || !imageThree || !imageFour || !imageFive) {
+    return NextResponse.json(
+      { error: "Images File blob is required." },
+      { status: 400 }
+    )
+  }
+
 
   const buffer = Buffer.from(await fileBlob.arrayBuffer());
   const storeData = parse.data
@@ -189,6 +207,22 @@ export async function POST(request: NextRequest) {
   const imageData = await cloudinary.uploader.upload(filePath)
   fs.unlinkSync(filePath)
 
+  const prismaImagesArr: { publicId: string, format: string, version: string }[] = []
+
+  const imagesPromise = function (x) {
+    x.map(async (image) => {
+      const imageFileName = (image as File).name;
+      const imageFileBlob = image as Blob
+      const imageFilePath = `public/images/uploads/${imageFileName}`
+      const imageBuffer = Buffer.from(await imageFileBlob.arrayBuffer());
+      fs.writeFileSync(imageFilePath, imageBuffer)
+      const imagesImageData = await cloudinary.uploader.upload(imageFilePath)
+      prismaImagesArr.push({ publicId: imagesImageData.public_id, format: imagesImageData.format, version: imagesImageData.version.toString() })
+    })
+  }
+
+  imagesPromise(imagesArr)
+
   const store = {
     name: storeData.name,
     averageRating: averageRating,
@@ -206,7 +240,6 @@ export async function POST(request: NextRequest) {
       delivery: storeData.serviceTypes.delivery.value,
       curbsidePickup: storeData.serviceTypes.curbsidePickup.value
     },
-    serviceHours: serviceHoursArr,
   }
 
   const name = store.name, phoneNumber = store.phoneNumber, instagramHandle = store.instagramHandle, avatarPublicId = store.avatar.publicId, avatarFormat = store.avatar.format, avatarVersion = store.avatar.version, serviceTypesSitIn = store.serviceTypes.sitIn, serviceTypesTakeOut = store.serviceTypes.takeOut, serviceTypesDelivery = store.serviceTypes.delivery, serviceTypesCurbsidePickup = store.serviceTypes.curbsidePickup, serviceHours = store.serviceHours
@@ -235,8 +268,7 @@ export async function POST(request: NextRequest) {
       serviceHours: {
         createMany: {
           data:
-            serviceHours
-
+            prismaImagesArr
         }
       }
     }

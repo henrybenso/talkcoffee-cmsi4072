@@ -45,9 +45,14 @@ export const schema = z.object({
         .refine((files) => files?.[0]?.size <= MAX_FILE_SIZE, `Max file size is 5MB.`)
         .refine(
             (files) => ACCEPTED_IMAGE_TYPES.includes(files?.[0]?.type),
-            ".jpg, .jpeg, .png and .webp files are accepted."
+            ".jpg, .jpeg, .png and .gif files are accepted."
         ),
-    // images: z.any(),
+    images: z.any().refine((files) => files?.length == 5, "Minimum 5 required.")
+        .refine((files) => files?.[0]?.size <= MAX_FILE_SIZE, `Max file size is 5MB.`)
+        .refine(
+            (files) => ACCEPTED_IMAGE_TYPES.includes(files?.[0]?.type),
+            ".jpg, .jpeg, .png and .gif files are accepted."
+        ),
     serviceTypes: z.object({
         sitIn: z.array(
             z.object({
@@ -127,7 +132,7 @@ export const schema = z.object({
     }),
 });
 
-export const schemaBackend = z.object({
+export const schemaStoreBackend = z.object({
     name: z.string().min(1, { message: "Required" }),
     rating: z.string(),
     //   rating: ratingToNumber,
@@ -157,8 +162,6 @@ export const schemaBackend = z.object({
     ),
     // phoneNumber: z.string().regex(new RegExp("^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]\d{3}[\s.-]\d{4}$")),
     instagramHandle: z.string().optional(),
-    avatar: z.string(),
-    // images: z.any(),
     serviceTypes: z.object({
         sitIn: z.array(
             z.object({
