@@ -1,16 +1,18 @@
-import { NextResponse } from "next/server";
-import { getImage } from "@/utils/formidable";
-import { uploadImage } from "@/utils/cloudinary";
+import { NextRequest, NextResponse } from "next/server";
+import fs from 'fs'
+import { v2 as cloudinary } from 'cloudinary'
 import { prisma } from "../../../../db"
 import { schemaBackend } from "@/app/validation"
 
 import moment from "../../../utils/moment-timezone"
 
-// export const config = {
-//   api: {
-//     bodyParser: false,
-//   },
-// };
+cloudinary.config(process.env.CLOUDINARY_URL || '');
+
+export const config = {
+  api: {
+    bodyParser: false,
+  },
+};
 
 interface Days {
   sunday: "SUN",
@@ -119,14 +121,20 @@ interface StoreObject {
   [key: string]: any
 }
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
 
   const formData = await request.formData()
   const storeFlat = formData.get("store")
   const storeObj = JSON.parse(String(storeFlat))
   console.log(storeObj)
 
-  const file = formData.get("avatar") as Blob | null
+  const file = formData.get("avatar")
+
+  const fileName = (file as File).name;
+  const fileBlob = file as Blob
+  const filePath = `public/images/uploads/${fileName}`
+
+
 
 
   const parse = schemaBackend.safeParse({
@@ -151,7 +159,8 @@ export async function POST(request: Request) {
     );
   }
 
-  const buffer = Buffer.from(await file.arrayBuffer());
+  const buffer = Buffer.from(await fileBlob.arrayBuffer());
+
 
 
   console.log("successful pasradoasdfasdfadgi0hnasg0igs0ihgsd PARSE")
@@ -191,13 +200,10 @@ export async function POST(request: Request) {
     }
   })
 
-  console.log("AYOadisjasdigj")
-  //fails after here
-  const imageUploaded = await getImage(formData)
+  fs.writeFileSync(filePath, buffer)
+  const imageData = await cloudinary.uploader.upload(filePath)
+  fs.unlinkSync(filePath)
 
-  // console.log(imageUploaded.path)
-
-  const imageData = await uploadImage(imageUploaded)
 
   console.log("A09EIHRA[09GHER90HJA9-ERHUA-0HREA-H00-H EYEYEYYE")
 
@@ -212,7 +218,6 @@ export async function POST(request: Request) {
       format: imageData.format,
       version: imageData.version.toString(),
     },
-    // avatar: "",
     serviceTypes: {
       sitIn: sitInArr,
       takeOut: storeData.serviceTypes.takeOut.value,

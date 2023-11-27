@@ -1,47 +1,13 @@
-import * as fs from 'fs'
-const cloudinary = require("cloudinary").v2;
-let streamifier = require('streamifier')
+// import { v2 as cloudinary } from 'cloudinary'
 
-cloudinary.config({
-  cloud_name: process.env.CLOUD_NAME,
-  api_key: process.env.API_KEY,
-  api_secret: process.env.API_SECRET,
-  secure: true
-});
+// cloudinary.config(process.env.CLOUDINARY_URL || '');
 
-// export function uploadImage(imageUploaded) {
+// export function uploadImage (imageUploaded) {
+//   // const imageData = await cloudinary.uploader.upload(filePath)
 //   return new Promise((resolve, reject) => {
-//     cloudinary.uploader.upload(
-//       imageUploaded,
-//       { width: 400, height: 300, crop: "fill" },
-//       (err, res) => {
-//         if (err) reject(err);
-//         resolve(res);
-//       }
-//     );
-//   });
+//     cloudinary.uploader.upload(imageUploaded, (err, res) => {
+//       if (err) reject(err);
+//       resolve(res);
+//     })
+//   })
 // }
-
-export async function uploadImage(imageUploaded) {
-  const byteArrayBuffer = fs.readFileSync(imageUploaded)
-  const uploadResult = await new Promise((resolve) => {
-    cloudinary.v2.uploader.upload_stream((error, uploadResult) => {
-        return resolve(uploadResult);
-    }).end(byteArrayBuffer);
-  });
-  return uploadResult
-}
-
-
-
-// let cld_upload_stream = cloudinary.uploader.upload_stream(
-//     {
-//       folder: "foo"
-//     },
-//     function(error, result) {
-//         console.log(error, result);
-//     }
-// );
-
-// streamifier.createReadStream(req.file.buffer).pipe(cld_upload_stream);
-
