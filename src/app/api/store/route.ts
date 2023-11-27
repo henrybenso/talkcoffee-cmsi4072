@@ -117,26 +117,17 @@ type ServiceHoursType = {
 //   return NextResponse.json({ result });
 // }
 
-interface StoreObject {
-  [key: string]: any
-}
-
 export async function POST(request: NextRequest) {
 
   const formData = await request.formData()
   const storeFlat = formData.get("store")
   const storeObj = JSON.parse(String(storeFlat))
-  console.log(storeObj)
 
   const file = formData.get("avatar")
 
   const fileName = (file as File).name;
   const fileBlob = file as Blob
   const filePath = `public/images/uploads/${fileName}`
-
-
-
-
   const parse = schemaBackend.safeParse({
     name: storeObj["name"],
     rating: storeObj["rating"],
@@ -148,7 +139,6 @@ export async function POST(request: NextRequest) {
   });
 
   if (!parse.success) {
-    console.log("ai0gnj0sdgiag0sasdfasdfasdfasdfasdfasdgasdgSFHGDDDDDDDDDDDDDDDDDDDDDDid")
     return { message: 'Failed to create Store' }
   }
 
@@ -160,16 +150,11 @@ export async function POST(request: NextRequest) {
   }
 
   const buffer = Buffer.from(await fileBlob.arrayBuffer());
-
-
-
-  console.log("successful pasradoasdfasdfadgi0hnasg0igs0ihgsd PARSE")
   const storeData = parse.data
 
   const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
   const averageRating = parseInt(storeData.rating)
   const ratingCount = 1
-  const sitInValues: DineTypes[] = []
   const sitIn = storeData.serviceTypes.sitIn
 
   const keys = Object.keys(storeData.serviceHours)
@@ -204,9 +189,6 @@ export async function POST(request: NextRequest) {
   const imageData = await cloudinary.uploader.upload(filePath)
   fs.unlinkSync(filePath)
 
-
-  console.log("A09EIHRA[09GHER90HJA9-ERHUA-0HREA-H00-H EYEYEYYE")
-
   const store = {
     name: storeData.name,
     averageRating: averageRating,
@@ -226,8 +208,6 @@ export async function POST(request: NextRequest) {
     },
     serviceHours: serviceHoursArr,
   }
-
-  console.log(store)
 
   const name = store.name, phoneNumber = store.phoneNumber, instagramHandle = store.instagramHandle, avatarPublicId = store.avatar.publicId, avatarFormat = store.avatar.format, avatarVersion = store.avatar.version, serviceTypesSitIn = store.serviceTypes.sitIn, serviceTypesTakeOut = store.serviceTypes.takeOut, serviceTypesDelivery = store.serviceTypes.delivery, serviceTypesCurbsidePickup = store.serviceTypes.curbsidePickup, serviceHours = store.serviceHours
   const result = await prisma.store.create({
@@ -259,142 +239,10 @@ export async function POST(request: NextRequest) {
 
         }
       }
-
-
     }
   })
 
   return NextResponse.json({
     result,
   });
-
 }
-// const res = await request.json();
-// const formData = await request.formData()
-// // console.log("res: ", res);
-
-// const {
-//   name,
-//   rating,
-//   phoneNumber,
-//   instagramHandle,
-//   avatar,
-//   serviceTypes,
-//   serviceHours,
-//   timezone
-// }: StoreType = res;
-
-// const averageRating = parseInt(rating)
-// const ratingCount = 1
-// const sitInValues: DineTypes[] = []
-// const sitInArr = serviceTypes.sitIn
-// sitInArr.map((obj) => {
-//   sitInValues.push(DineTypes[obj['value']])
-// })
-
-// const keys = Object.keys(serviceHours)
-// const newServiceHours: { day: Days, open: string, close: string }[] = []
-// let date = new Date()
-// let dateToText = date.toISOString()
-// let currentDate: string = dateToText.slice(0, 10)
-
-// keys.forEach(key => {
-//   let currentDay = serviceHours[key as keyof ServiceHoursType]
-//   if (currentDay.open !== "" && currentDay.open !== "") {
-//     currentDay.day = (Days as Days)[key]
-
-//     let formattedCloseDate = currentDate.concat(" ", currentDay.close)
-//     let convertedCloseDate = moment.tz(formattedCloseDate, timezone)
-//     currentDay.close = convertedCloseDate.utc().format()
-
-//     let formattedOpenDate = currentDate.concat(" ", currentDay.open)
-//     let convertedOpenDate = moment.tz(formattedOpenDate, timezone)
-//     currentDay.open = convertedOpenDate.utc().format()
-
-//     // console.log(convertedCloseDate)
-//     newServiceHours.push(currentDay)
-//   }
-// })
-
-// // let prismaAvatar = {
-
-// // }
-
-// // const imageUploaded = await getImage(request);
-// // console.log(imageUploaded)
-// // let imageDatas = [];
-// // imageUploaded.map(async (image) => {
-// //   const imageData = await uploadImage(image.path);
-// //   imageDatas.append({
-// //     publicId: imageData.public_id,
-// //     format: imageData.format,
-// //     version: imageData.version.tostring(),
-// //   });
-// // });
-
-// const imageUploaded = await getImage(request)
-
-// const imageData = await uploadImage(imageUploaded.path)
-
-
-
-// const result = await prisma.store.create({
-//   data: {
-//     name,
-//     averageRating,
-//     ratingCount,
-//     phoneNumber,
-//     instagramHandle,
-//     avatar: {
-//       create: {
-//         publicId: imageData.public_id,
-//         format: imageData.format,
-//         version: imageData.version.toString(),
-//       }
-//     },
-//     // images: {
-//     //   createMany: {
-//     //     data: imageDatas,
-//     //     skipDuplicates: true,
-//     //   },
-//     // },
-//     serviceTypes: {
-//       create: {
-//         sitIn: sitInValues,
-//         takeOut: serviceTypes.takeOut.value,
-//         delivery: serviceTypes.delivery.value,
-//         curbsidePickup: serviceTypes.curbsidePickup.value,
-//       },
-//     },
-//     serviceHours: {
-//       createMany: {
-//         data:
-//           newServiceHours
-
-//       }
-//     },
-//   },
-// });
-
-// // console.log("result: ")
-// // console.log(result)
-
-// return NextResponse.json({
-//   result,
-// });
-
-// export async function UPDATE(request: Request) {
-//   const res = await request.json();
-
-//   const { phoneNumber, instagramHandle, avatar, serviceTypes, serviceHours } =
-//     res;
-
-//   const result = prisma.user.update({
-//     where: {
-//       email: email,
-//     },
-//     data: {},
-//   });
-
-//   return NextResponse.json({ result });
-// }
