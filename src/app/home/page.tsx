@@ -7,7 +7,7 @@ import { Suspense } from "react";
 import { Button } from "@/components/ui/button";
 import { buttonVariants } from "@/components/ui/button";
 import Hearts from "./hearts";
-import StoreSideBar from "./storePage";
+import Suggestions from "./suggestions";
 
 export default async function Home({
   searchParams,
@@ -50,12 +50,16 @@ export default async function Home({
         <h1 className="p-5 shrink-0 flex place-content-center">
           <div className="text-5xl font-bold text-yellow-900">TalkCoffee</div>
         </h1>
-        <h2 className="p-4">
-          <Searchbar />
+        <h2 className="">
+          <div className="pr-4 pt-4 pl-4">
+            <Searchbar />
+          </div>
+          <div className="pr-4 pb-4 pl-4">
+            {/* <Suspense key={query} fallback={<Hearts />}>
+              <Suggestions query={query} />
+            </Suspense> */}
+          </div>
         </h2>
-        <Suspense key={query} fallback={<Hearts />}>
-          {/* <StoreSideBar query={query} /> */}
-        </Suspense>
       </>
     </Layout>
   );
