@@ -6,7 +6,17 @@ import Searchbar from "./searchbar";
 import { Button } from "@/components/ui/button";
 import { buttonVariants } from "@/components/ui/button";
 
-export default function Home() {
+export default function Home({
+  searchParams,
+}: {
+  searchParams?: {
+    query?: string;
+    page?: string;
+  };
+}) {
+  const query = searchParams?.query || "";
+  const currentPage = Number(searchParams?.page) || 1;
+
   return (
     <Layout>
       <>
@@ -38,7 +48,7 @@ export default function Home() {
           <div className="text-5xl font-bold text-yellow-900">TalkCoffee</div>
         </h1>
         <h2 className="p-4">
-          <Searchbar />
+          <Searchbar placeholder="Search stores..." />
         </h2>
       </>
     </Layout>

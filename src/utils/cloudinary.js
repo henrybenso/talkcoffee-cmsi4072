@@ -1,20 +1,13 @@
-const cloudinary = require("cloudinary").v2;
+// import { v2 as cloudinary } from 'cloudinary'
 
-cloudinary.config({
-  cloud_name: process.env.CLOUD_NAME,
-  api_key: process.env.API_KEY,
-  api_secret: process.env.API_SECRET,
-});
+// cloudinary.config(process.env.CLOUDINARY_URL || '');
 
-export function uploadImage(imageUploaded) {
-  return new Promise((resolve, reject) => {
-    cloudinary.uploader.upload(
-      imageUploaded,
-      { width: 400, height: 300, crop: "fill" },
-      (err, res) => {
-        if (err) reject(err);
-        resolve(res);
-      }
-    );
-  });
-}
+// export function uploadImage (imageUploaded) {
+//   // const imageData = await cloudinary.uploader.upload(filePath)
+//   return new Promise((resolve, reject) => {
+//     cloudinary.uploader.upload(imageUploaded, (err, res) => {
+//       if (err) reject(err);
+//       resolve(res);
+//     })
+//   })
+// }

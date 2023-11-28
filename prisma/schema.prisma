@@ -35,8 +35,9 @@ model Store {
   ratingCount     Int
   phoneNumber     String?
   instagramHandle String?
-  avatar          String
-  // images          Image[]
+  avatar          AvatarImage    @relation(fields: [avatarImageId], references: [id])
+  avatarImageId   String         @unique
+  images          Image[]
   createdAt       DateTime       @default(now())
   updatedAt       DateTime       @updatedAt
   serviceTypes    ServiceTypes   @relation(fields: [serviceTypesId], references: [id])
@@ -45,11 +46,12 @@ model Store {
 }
 
 model ServiceTypes {
-  id       String      @id @default(uuid())
-  sitIn    DineTypes[]
-  takeOut  Boolean
-  delivery Boolean
-  Store    Store?
+  id             String      @id @default(uuid())
+  sitIn          DineTypes[]
+  takeOut        Boolean
+  delivery       Boolean
+  curbsidePickup Boolean
+  Store          Store?
 }
 
 model ServiceHours {
@@ -61,20 +63,22 @@ model ServiceHours {
   storeId String
 }
 
-// model Category {
-//   id           String        @id @default(uuid())
-//   type         DineTypes[]
-//   serviceTypes ServiceTypes?
-// }
+model AvatarImage {
+  id       String @id @default(cuid())
+  publicId String @unique
+  format   String
+  version  String
+  Store    Store?
+}
 
-// model Image {
-//   id       String @id @default(cuid())
-//   publicId String @unique
-//   format   String
-//   version  String
-//   Store    Store  @relation(fields: [storeId], references: [id])
-//   storeId  String
-// }
+model Image {
+  id       String @id @default(cuid())
+  publicId String @unique
+  format   String
+  version  String
+  Store    Store  @relation(fields: [storeId], references: [id])
+  storeId  String
+}
 
 enum Role {
   BASIC

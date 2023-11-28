@@ -2,6 +2,7 @@
 
 import Layout from "../../layout";
 import Link from "next/link";
+import Router from "next/router";
 import validator from "validator";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -10,152 +11,100 @@ import { buttonVariants } from "@/components/ui/button";
 import { Controller, useForm } from "react-hook-form";
 import { useState } from "react";
 import Select from "react-select";
+import { VALUES, schema } from "@/app/validation";
 
+interface Days {
+  sunday: "SUN";
+  monday: "MON";
+  tuesday: "TUE";
+  wednesday: "WED";
+  thursday: "TR";
+  friday: "FRI";
+  saturday: "SAT";
+}
+export const Days = {
+  sunday: "SUN",
+  monday: "MON",
+  tuesday: "TUE",
+  wednesday: "WED",
+  thursday: "TR",
+  friday: "FRI",
+  saturday: "SAT",
+};
+
+enum sitInValue {
+  cafe = "CAFE",
+  bar = "BAR",
+}
 const dineOptions = [
   { value: "CAFE", label: "sit in" },
   { value: "BAR", label: "bar" },
 ];
 
-const SUN = ["SUN"] as const;
-const MON = ["MON"] as const;
-const TUES = ["TUES"] as const;
-const WED = ["WED"] as const;
-const TR = ["TR"] as const;
-const FRI = ["FRI"] as const;
-const SAT = ["SAT"] as const;
-const DAYS = ["SUN", "MON", "TUE", "WED", "TR", "FRI", "SAT"] as const;
-const VALUES = ["CAFE", "BAR"] as const;
-const ratinglike = z.string();
-const ratingliketoNumber = ratinglike.pipe(z.coerce.number());
-const schema = z.object({
-  name: z.string().min(1, { message: "Required" }),
-  rating: ratingliketoNumber,
-  // rating: z.string().transform((val, ctx) => {
-  //   const parsed = parseInt(val);
-  //   if (isNaN(parsed)) {
-  //     ctx.addIssue({
-  //       code: z.ZodIssueCode.custom,
-  //       message: "Not a number",
-  //     });
-  //     return z.NEVER;
-  //   }
-  //   if (parsed < 1 || parsed > 5) {
-  //     ctx.addIssue({
-  //       code: z.ZodIssueCode.custom,
-  //       message: "Number is less than 1 or larger than 5",
-  //     });
-  //     return z.NEVER;
-  //   }
-  //   return parsed;
-  // }),
-  phoneNumber: z.string().refine(
-    (val) => validator.isMobilePhone(val),
-    (val) => ({
-      message: `${val}: Phone Nubmer is not valid`,
-    })
-  ),
-  // phoneNumber: z.string().regex(new RegExp("^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]\d{3}[\s.-]\d{4}$")),
-  instagramHandle: z.string().optional(),
-  avatar: z.string(),
-  // images: z.array(z.string()),
-  serviceTypes: z
-    .object({
-      sitIn: z.array(z.enum(VALUES)),
-      takeOut: z.boolean(),
-      delivery: z.boolean(),
-    })
-    .required(),
-  serviceHours: z
-    .object({
-      sunday: z
-        .object({
-          open: z.string().datetime(),
-          close: z.string().datetime(),
-        })
-        .refine((data) => data.open !== data.close, {
-          message: "Times cannot be the same value!",
-        })
-        .optional(),
-      monday: z
-        .object({
-          open: z.string().datetime(),
-          close: z.string().datetime(),
-        })
-        .refine((data) => data.open !== data.close, {
-          message: "Times cannot be the same value!",
-        })
-        .optional(),
-      tuesday: z
-        .object({
-          open: z.string().datetime(),
-          close: z.string().datetime(),
-        })
-        .refine((data) => data.open !== data.close, {
-          message: "Times cannot be the same value!",
-        })
-        .optional(),
-      wednesday: z
-        .object({
-          open: z.string().datetime(),
-          close: z.string().datetime(),
-        })
-        .refine((data) => data.open !== data.close, {
-          message: "Times cannot be the same value!",
-        })
-        .optional(),
-      thursday: z
-        .object({
-          open: z.string().datetime(),
-          close: z.string().datetime(),
-        })
-        .refine((data) => data.open !== data.close, {
-          message: "Times cannot be the same value!",
-        })
-        .optional(),
-      friday: z
-        .object({
-          open: z.string().datetime(),
-          close: z.string().datetime(),
-        })
-        .refine((data) => data.open !== data.close, {
-          message: "Times cannot be the same value!",
-        })
-        .optional(),
-      saturday: z
-        .object({
-          open: z.string().datetime(),
-          close: z.string().datetime(),
-        })
-        .refine((data) => data.open !== data.close, {
-          message: "Times cannot be the same value!",
-        })
-        .optional(),
-    })
-    .required(),
-});
-
-// const MAX_COUNT = 5;
-
 export default function CreateStore() {
   const {
+    register,
     control,
     handleSubmit,
     formState: { errors },
     getValues,
   } = useForm({
     resolver: zodResolver(schema),
+    defaultValues: {
+      name: "",
+      rating: "5",
+      phoneNumber: "",
+      instagramHandle: "",
+      avatar: "",
+      images: "",
+      serviceTypes: {
+        sitIn: [dineOptions[0]],
+        takeOut: { value: false, label: "No" },
+        delivery: { value: false, label: "No" },
+        curbsidePickup: { value: false, label: "No" },
+      },
+      serviceHours: {
+        sunday: {
+          open: "",
+          close: "",
+        },
+        monday: {
+          open: "",
+          close: "",
+        },
+        tuesday: {
+          open: "",
+          close: "",
+        },
+        wednesday: {
+          open: "",
+          close: "",
+        },
+        thursday: {
+          open: "",
+          close: "",
+        },
+        friday: {
+          open: "",
+          close: "",
+        },
+        saturday: {
+          open: "",
+          close: "",
+        },
+      },
+    },
   });
 
-  // const _onSubmit = (data: any) => {
-  //   alert(JSON.stringify(data));
-  // };
-
-  const handleGetValues = () => {
-    console.log("Get Values", getValues());
-  };
-
-  // const [uploadedFiles, setUploadedFiles] = useState([]);
+  // const [imageUploaded, setImageUploaded] = useState();
+  // const [uploadedFiles, setUploadedFiles] = useState();
   const [fileLimit, setFileLimit] = useState(false);
+  const selectUniqueId = Date.now().toString();
+
+  // const handleChange = (event) => {
+  //   setImageUploaded(event.target.files[0]);
+  //   console.log(imageUploaded);
+  // };
 
   // const handleUploadFiles = (files) => {
   //   const uploaded = [...uploadedFiles];
@@ -176,43 +125,55 @@ export default function CreateStore() {
   // };
 
   // const handleFileEvent = (e) => {
-  //   const chosenFiles = Array.prototype.slice.call(e.target.files);
-  //   handleUploadFiles(chosenFiles);
+  //   const chosenFiles = Array.prototype.slice.call(e.target.files[0]);
+  //   // console.log(chosenFiles);
+  //   // handleUploadFiles(chosenFiles);
   // };
 
-  async function onSubmit(values: z.infer<typeof schema>) {
+  const handleGetValues = () => {
+    console.log("Get Values", getValues());
+  };
+
+  const _onSubmit = (data: any) => {
+    // alert(JSON.stringify(data));
+    console.log(data);
+  };
+
+  async function submitForm(values: z.infer<typeof schema>) {
+    // if (!imageUploaded) {
+    //   return;
+    // }
     const {
       name,
       rating,
       phoneNumber,
       instagramHandle,
       avatar,
-      // images,
+      images,
       serviceTypes,
       serviceHours,
     } = values;
 
-    const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    const formData = new FormData();
+    console.log(avatar[0]);
+    formData.append("avatar", avatar[0]);
+    formData.append("imageOne", images[0]);
+    formData.append("imageTwo", images[1]);
+    formData.append("imageThree", images[2]);
+    formData.append("imageFour", images[3]);
+    formData.append("imageFive", images[4]);
+    // values = { ...values, avatar: avatar[0].name };
+    formData.append("store", JSON.stringify(values));
 
+    // console.log(formData.values());
+    // for (const value of formData.values()) [console.log(value)];
     const res = await fetch("http://localhost:3000/api/store", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        name,
-        rating,
-        phoneNumber,
-        instagramHandle,
-        avatar,
-        // images,
-        serviceTypes,
-        serviceHours,
-        timezone,
-      }),
+      body: formData,
     });
-
-    const data = await res.json();
+    // console.log(res);
+    const result = await res.json();
+    console.log(result);
   }
 
   return (
@@ -233,7 +194,7 @@ export default function CreateStore() {
               add your store ☕
             </h1>
           </section>
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+          <form onSubmit={handleSubmit(submitForm)} className="space-y-8">
             <div className="space-y-2">
               <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                 Store Name
@@ -269,7 +230,6 @@ export default function CreateStore() {
                       className="flex h-10 w-2/12 rounded-md border-2 border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none hover:border-transparent focus:outline-none focus:ring-2 focus:ring-yellow-700 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                       {...field}
                     >
-                      <option disabled selected></option>
                       <option value="5">5</option>
                       <option value="4">4</option>
                       <option value="3">3</option>
@@ -332,8 +292,8 @@ export default function CreateStore() {
                 It's not required, but we recommend you include it!
               </p>
               <div className="text-destructive text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                {errors.instagram?.message && (
-                  <p>{errors.instagram?.message}</p>
+                {errors.instagramHandle?.message && (
+                  <p>{errors.instagramHandle?.message}</p>
                 )}
               </div>
             </div>
@@ -341,25 +301,17 @@ export default function CreateStore() {
               <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                 Avatar
               </label>
-              <Controller
-                name="avatar"
-                control={control}
-                render={({ field }) => {
-                  return (
-                    <input
-                      className="block w-full text-sm text-slate-500
+              <input
+                className="block w-full text-sm text-slate-500
                 file:mr-4 file:py-2 file:px-4
                 file:rounded-full file:border-0
                 file:text-sm file:font-semibold
                 file:bg-violet-50 file:bg-transparent
                 hover:file:bg-violet-100"
-                      id="avatar"
-                      type="file"
-                      accept=".jpg, .png, .gif, .jpeg"
-                      {...field}
-                    />
-                  );
-                }}
+                id="avatar"
+                type="file"
+                accept=".jpg, .png, .gif, .jpeg"
+                {...register("avatar")}
               />
               <p className="text-sm text-muted-foreground">
                 e.g. store logo, company logo, store front
@@ -369,36 +321,31 @@ export default function CreateStore() {
               </div>
             </div>
 
-            {/* <div className="space-y-2">
+            <div className="space-y-2">
               <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                 Images
               </label>
-              <Controller
-                name="images"
-                control={control}
-                render={({ field }) => {
-                  return (
-                    <input
-                      className="block w-full text-sm text-slate-500
+              <input
+                className="block w-full text-sm text-slate-500
 file:mr-4 file:py-2 file:px-4
 file:rounded-full file:border-0
 file:text-sm file:font-semibold
 file:bg-violet-50 file:bg-transparent
 hover:file:bg-violet-100"
-                      id="images"
-                      type="file"
-                      multiple
-                      accept=".jpg, .png, .gif, .jpeg"
-                      disabled={fileLimit}
-                      {...field}
-                    />
-                  );
-                }}
+                id="images"
+                type="file"
+                multiple
+                accept=".jpg, .png, .gif, .jpeg"
+                disabled={fileLimit}
+                {...register("images")}
+                name="images"
+                // onChange={handleFileEvent}
               />
               <div className="text-destructive text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                 {errors.images?.message && <p>{errors.images?.message}</p>}
               </div>
-            </div> */}
+            </div>
+
             <div className="space-y-2">
               <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                 What kind of store is it?
@@ -407,14 +354,17 @@ hover:file:bg-violet-100"
                 name="serviceTypes.sitIn"
                 control={control}
                 render={({ field }) => (
-                  <Select {...field} isMulti options={dineOptions} />
+                  <Select
+                    {...field}
+                    isMulti
+                    options={dineOptions}
+                    instanceId={selectUniqueId}
+                  />
                 )}
               />
-              <div className="text-destructive text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                {errors.serviceTypes?.message && (
-                  <p>{errors.serviceTypes?.message}</p>
-                )}
-              </div>
+              {/* <div className="text-destructive text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                {errors.sitIn?.message && <p>{errors.sitIn?.message}</p>}
+              </div> */}
             </div>
             <div className="space-y-2">
               <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
@@ -452,7 +402,24 @@ hover:file:bg-violet-100"
                 )}
               />
             </div>
-
+            <div className="space-y-2">
+              <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                Curbside Pickup
+              </label>
+              <Controller
+                name="serviceTypes.curbsidePickup"
+                control={control}
+                render={({ field }) => (
+                  <Select
+                    {...field}
+                    options={[
+                      { value: true, label: "Yes" },
+                      { value: false, label: "No" },
+                    ]}
+                  />
+                )}
+              />
+            </div>
             <div className="space-y-2">
               <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                 Sunday
@@ -468,12 +435,16 @@ hover:file:bg-violet-100"
                     <input
                       className="h-10 rounded-md border-2 border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none hover:border-transparent focus:outline-none focus:ring-2 focus:ring-yellow-700 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                       type="time"
-                      id="sunday"
                       {...field}
                     />
                   </div>
                 )}
               />
+              {/* <div className="text-destructive text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                {errors.sunday?.open?.message && (
+                  <p>{errors.sunday?.open?.message}</p>
+                )}
+              </div> */}
               <Controller
                 name="serviceHours.sunday.close"
                 control={control}
@@ -485,12 +456,16 @@ hover:file:bg-violet-100"
                     <input
                       className="h-10 rounded-md border-2 border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none hover:border-transparent focus:outline-none focus:ring-2 focus:ring-yellow-700 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                       type="time"
-                      id="sunday"
                       {...field}
                     />
                   </div>
                 )}
               />
+              {/* <div className="text-destructive text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                {errors.sunday?.close?.message && (
+                  <p>{errors.sunday?.close?.message}</p>
+                )}
+              </div> */}
             </div>
 
             <div className="space-y-2">
@@ -508,12 +483,16 @@ hover:file:bg-violet-100"
                     <input
                       className="h-10 rounded-md border-2 border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none hover:border-transparent focus:outline-none focus:ring-2 focus:ring-yellow-700 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                       type="time"
-                      id="monday"
                       {...field}
                     />
                   </div>
                 )}
               />
+              {/* <div className="text-destructive text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                {errors.monday?.open?.message && (
+                  <p>{errors.monday?.open?.message}</p>
+                )}
+              </div> */}
               <Controller
                 name="serviceHours.monday.close"
                 control={control}
@@ -525,12 +504,16 @@ hover:file:bg-violet-100"
                     <input
                       className="h-10 rounded-md border-2 border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none hover:border-transparent focus:outline-none focus:ring-2 focus:ring-yellow-700 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                       type="time"
-                      id="monday"
                       {...field}
                     />
                   </div>
                 )}
               />
+              {/* <div className="text-destructive text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                {errors.monday?.close?.message && (
+                  <p>{errors.monday?.close?.message}</p>
+                )}
+              </div> */}
             </div>
 
             <div className="space-y-2">
@@ -548,7 +531,6 @@ hover:file:bg-violet-100"
                     <input
                       className="h-10 rounded-md border-2 border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none hover:border-transparent focus:outline-none focus:ring-2 focus:ring-yellow-700 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                       type="time"
-                      id="tuesday"
                       {...field}
                     />
                   </div>
@@ -565,7 +547,6 @@ hover:file:bg-violet-100"
                     <input
                       className="h-10 rounded-md border-2 border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none hover:border-transparent focus:outline-none focus:ring-2 focus:ring-yellow-700 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                       type="time"
-                      id="tuesday"
                       {...field}
                     />
                   </div>
@@ -588,7 +569,6 @@ hover:file:bg-violet-100"
                     <input
                       className="h-10 rounded-md border-2 border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none hover:border-transparent focus:outline-none focus:ring-2 focus:ring-yellow-700 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                       type="time"
-                      id="wednesday"
                       {...field}
                     />
                   </div>
@@ -605,7 +585,6 @@ hover:file:bg-violet-100"
                     <input
                       className="h-10 rounded-md border-2 border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none hover:border-transparent focus:outline-none focus:ring-2 focus:ring-yellow-700 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                       type="time"
-                      id="wednesday"
                       {...field}
                     />
                   </div>
@@ -628,7 +607,6 @@ hover:file:bg-violet-100"
                     <input
                       className="h-10 rounded-md border-2 border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none hover:border-transparent focus:outline-none focus:ring-2 focus:ring-yellow-700 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                       type="time"
-                      id="thursday"
                       {...field}
                     />
                   </div>
@@ -645,7 +623,6 @@ hover:file:bg-violet-100"
                     <input
                       className="h-10 rounded-md border-2 border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none hover:border-transparent focus:outline-none focus:ring-2 focus:ring-yellow-700 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                       type="time"
-                      id="thursday"
                       {...field}
                     />
                   </div>
@@ -668,7 +645,6 @@ hover:file:bg-violet-100"
                     <input
                       className="h-10 rounded-md border-2 border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none hover:border-transparent focus:outline-none focus:ring-2 focus:ring-yellow-700 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                       type="time"
-                      id="friday"
                       {...field}
                     />
                   </div>
@@ -685,7 +661,6 @@ hover:file:bg-violet-100"
                     <input
                       className="h-10 rounded-md border-2 border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none hover:border-transparent focus:outline-none focus:ring-2 focus:ring-yellow-700 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                       type="time"
-                      id="friday"
                       {...field}
                     />
                   </div>
@@ -708,7 +683,6 @@ hover:file:bg-violet-100"
                     <input
                       className="h-10 rounded-md border-2 border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none hover:border-transparent focus:outline-none focus:ring-2 focus:ring-yellow-700 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                       type="time"
-                      id="saturday"
                       {...field}
                     />
                   </div>
@@ -725,7 +699,6 @@ hover:file:bg-violet-100"
                     <input
                       className="h-10 rounded-md border-2 border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none hover:border-transparent focus:outline-none focus:ring-2 focus:ring-yellow-700 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                       type="time"
-                      id="saturday"
                       {...field}
                     />
                   </div>

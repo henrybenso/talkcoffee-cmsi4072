@@ -34,7 +34,7 @@ CREATE TABLE "Store" (
     "ratingCount" INTEGER NOT NULL,
     "phoneNumber" TEXT,
     "instagramHandle" TEXT,
-    "avatar" TEXT NOT NULL,
+    "avatarImageId" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "serviceTypesId" TEXT NOT NULL,
@@ -48,6 +48,7 @@ CREATE TABLE "ServiceTypes" (
     "sitIn" "DineTypes"[],
     "takeOut" BOOLEAN NOT NULL,
     "delivery" BOOLEAN NOT NULL,
+    "curbsidePickup" BOOLEAN NOT NULL,
 
     CONSTRAINT "ServiceTypes_pkey" PRIMARY KEY ("id")
 );
@@ -63,6 +64,27 @@ CREATE TABLE "ServiceHours" (
     CONSTRAINT "ServiceHours_pkey" PRIMARY KEY ("id")
 );
 
+-- CreateTable
+CREATE TABLE "AvatarImage" (
+    "id" TEXT NOT NULL,
+    "publicId" TEXT NOT NULL,
+    "format" TEXT NOT NULL,
+    "version" TEXT NOT NULL,
+
+    CONSTRAINT "AvatarImage_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Image" (
+    "id" TEXT NOT NULL,
+    "publicId" TEXT NOT NULL,
+    "format" TEXT NOT NULL,
+    "version" TEXT NOT NULL,
+    "storeId" TEXT NOT NULL,
+
+    CONSTRAINT "Image_pkey" PRIMARY KEY ("id")
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 
@@ -73,10 +95,25 @@ CREATE UNIQUE INDEX "User_username_key" ON "User"("username");
 CREATE INDEX "User_email_idx" ON "User"("email");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "Store_avatarImageId_key" ON "Store"("avatarImageId");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "Store_serviceTypesId_key" ON "Store"("serviceTypesId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "AvatarImage_publicId_key" ON "AvatarImage"("publicId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Image_publicId_key" ON "Image"("publicId");
+
+-- AddForeignKey
+ALTER TABLE "Store" ADD CONSTRAINT "Store_avatarImageId_fkey" FOREIGN KEY ("avatarImageId") REFERENCES "AvatarImage"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Store" ADD CONSTRAINT "Store_serviceTypesId_fkey" FOREIGN KEY ("serviceTypesId") REFERENCES "ServiceTypes"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "ServiceHours" ADD CONSTRAINT "ServiceHours_storeId_fkey" FOREIGN KEY ("storeId") REFERENCES "Store"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Image" ADD CONSTRAINT "Image_storeId_fkey" FOREIGN KEY ("storeId") REFERENCES "Store"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
