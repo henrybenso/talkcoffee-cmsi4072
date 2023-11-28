@@ -1,11 +1,7 @@
 "use client";
-import { Suspense, useState } from "react";
+import { useState } from "react";
 import { useSearchParams, usePathname, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-// import Suggestions from "./suggestions";
-import Hearts from "./hearts";
-import Suggestions from "./suggestions";
-import { NextResponse } from "next/server";
 
 export default function Search() {
   // const [stores, setStores] = useState([]);
@@ -20,7 +16,6 @@ export default function Search() {
     if (term) {
       params.set("query", term);
       const stores = fetchStores(term);
-      console.log(storeState);
       setShowSuggestions(true);
     } else {
       params.delete("query");
@@ -36,18 +31,11 @@ export default function Search() {
         "Content-Type": "application/json",
       },
     });
-    // if (!res.ok) {
-    //   throw new Error("Failed to fetch stores");
-    // }
 
     const data = await res.json();
     // console.log(data);
     setStoresState(data);
   }
-
-  // const stores = fetchStores();
-  // console.log(storeState);
-  console.log("HERE ARE OUR STORES:", storeState);
 
   return (
     <div>
