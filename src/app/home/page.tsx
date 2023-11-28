@@ -7,7 +7,7 @@ import { Suspense } from "react";
 import { Button } from "@/components/ui/button";
 import { buttonVariants } from "@/components/ui/button";
 import Hearts from "./hearts";
-import StorePage from "./storePage";
+import StoreSideBar from "./storePage";
 
 export default async function Home({
   searchParams,
@@ -54,7 +54,7 @@ export default async function Home({
           <Searchbar />
         </h2>
         <Suspense key={query} fallback={<Hearts />}>
-          {/* <StorePage query={query} /> */}
+          {/* <StoreSideBar query={query} /> */}
         </Suspense>
       </>
     </Layout>
