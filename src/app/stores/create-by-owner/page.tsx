@@ -182,12 +182,6 @@ export default function CreateStore() {
         <Link href="/" className={buttonVariants({ variant: "outline" })}>
           Back
         </Link>
-        <Link
-          href="/stores/create/add-image"
-          className={buttonVariants({ variant: "outline" })}
-        >
-          image upload button
-        </Link>
         <div className="grid place-content-center">
           <section>
             <h1 className="p-5 shrink-0 flex place-content-center text-5xl font-bold text-black">

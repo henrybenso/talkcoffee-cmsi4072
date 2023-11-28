@@ -3,19 +3,22 @@ import styles from "./page.module.css";
 import Link from "next/link";
 import Layout from "../../app/layout";
 import Searchbar from "./searchbar";
+import { Suspense } from "react";
 import { Button } from "@/components/ui/button";
 import { buttonVariants } from "@/components/ui/button";
+import Hearts from "./hearts";
+import StorePage from "./storePage";
 
-export default function Home({
+export default async function Home({
   searchParams,
 }: {
   searchParams?: {
     query?: string;
-    page?: string;
+    // page?: string;
   };
 }) {
   const query = searchParams?.query || "";
-  const currentPage = Number(searchParams?.page) || 1;
+  // const currentPage = Number(searchParams?.page) || 1;
 
   return (
     <Layout>
@@ -48,8 +51,11 @@ export default function Home({
           <div className="text-5xl font-bold text-yellow-900">TalkCoffee</div>
         </h1>
         <h2 className="p-4">
-          <Searchbar placeholder="Search stores..." />
+          <Searchbar />
         </h2>
+        <Suspense key={query} fallback={<Hearts />}>
+          {/* <StorePage query={query} /> */}
+        </Suspense>
       </>
     </Layout>
   );

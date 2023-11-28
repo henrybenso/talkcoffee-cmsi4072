@@ -14,7 +14,7 @@ async function main() {
 
     const store = await prisma.store.create({
         data: {
-            name: "bananaphone@gmail.com1",
+            name: "blue bottle coffee yEEEEEEEEEEEEEE",
             averageRating: 5,
             ratingCount: 1,
             phoneNumber: "62662234",
