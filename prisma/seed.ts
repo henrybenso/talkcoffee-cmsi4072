@@ -21,7 +21,7 @@ async function main() {
             instagramHandle: "asdfasdf",
             avatar: {
                 create: {
-                    publicId: "test_publicId",
+                    publicId: "test_publicIdaaaasdasd",
                     format: "test_publicId",
                     version: "test_publicId",
                 },

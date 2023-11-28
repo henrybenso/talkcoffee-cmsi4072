@@ -19,10 +19,12 @@ export default function Search() {
     const params = new URLSearchParams(searchParams);
     if (term) {
       params.set("query", term);
-      // setShowSuggestions(true);
+      const stores = fetchStores(term);
+      console.log(storeState);
+      setShowSuggestions(true);
     } else {
       params.delete("query");
-      // setShowSuggestions(false);
+      setShowSuggestions(false);
     }
     replace(`${pathname}?${params.toString()}`);
   }
@@ -39,38 +41,48 @@ export default function Search() {
     // }
 
     const data = await res.json();
-    console.log(data);
-    setStoresState(data.stores);
+    // console.log(data);
+    setStoresState(data);
   }
 
-  const stores = fetchStores("blue");
+  // const stores = fetchStores();
+  // console.log(storeState);
   console.log("HERE ARE OUR STORES:", storeState);
 
   return (
-    <div className="relative flex flex-1 flex-shrink-0">
-      <label htmlFor="search" className="sr-only">
-        Search
-      </label>
-      <input
-        type="text"
-        id="search"
-        name="search"
-        className="peer block w-full rounded-md border border-gray-200 py-[9px] pl-10 text-sm outline-2 placeholder:text-gray-500"
-        placeholder="Type your search here"
-        onChange={(e) => {
-          handleSearch(e.target.value);
-        }}
-        defaultValue={searchParams.get("query")?.toString()}
-      />
-      <Button type="submit">Search</Button>
-      {/* {showSuggestions && ( */}
-      <Suspense
-        key={searchParams.get("query")?.toString()}
-        fallback={<Hearts />}
-      >
-        {/* <Suggestions query={searchParams.get("query")?.toString()} /> */}
-      </Suspense>
-      {/* )} */}
+    <div>
+      <div className="relative flex flex-1 flex-shrink-0">
+        <label htmlFor="search" className="sr-only">
+          Search
+        </label>
+        <input
+          type="text"
+          id="search"
+          name="search"
+          className="peer block w-full rounded-md border border-gray-200 py-[9px] pl-10 text-sm outline-2 placeholder:text-gray-500"
+          placeholder="Search..."
+          onChange={(e) => {
+            handleSearch(e.target.value);
+          }}
+          defaultValue={searchParams.get("query")?.toString()}
+        />
+        <Button type="submit">Search</Button>
+      </div>
+
+      <div>
+        {showSuggestions && (
+          <ul className="w-full">
+            {Object.keys(storeState).map((store) => (
+              <li
+                key={storeState[store].id}
+                className="text-sm pl-10 p-3 border black-black"
+              >
+                {storeState[store].name}
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
     </div>
   );
 }
