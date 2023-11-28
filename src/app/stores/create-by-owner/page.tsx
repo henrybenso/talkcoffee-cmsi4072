@@ -32,13 +32,13 @@ export const Days = {
   saturday: "SAT",
 };
 
-enum sitInValue {
-  cafe = "CAFE",
-  bar = "BAR",
+enum DineTypes {
+  CAFE = "CAFE",
+  BAR = "BAR",
 }
 const dineOptions = [
-  { value: "CAFE", label: "sit in" },
-  { value: "BAR", label: "bar" },
+  { value: DineTypes.CAFE, label: "sit in" },
+  { value: DineTypes.BAR, label: "bar" },
 ];
 
 export default function CreateStore() {
