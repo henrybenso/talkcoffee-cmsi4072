@@ -84,6 +84,12 @@ type AvatarType = {
     version: string
 }
 
+type ImageType = {
+    publicId: string
+    format: string
+    version: string
+}
+
 
 type ServiceTypesType = {
     sitIn: DineTypes[];
@@ -105,7 +111,7 @@ export type PrismaStoreType = {
     phoneNumber: string;
     instagramHandle: string | undefined;
     avatar: AvatarType;
-    // images: [ImagesType]
+    images: [ImageType]
     serviceTypes: ServiceTypesType;
     serviceHours: ServiceHoursType[];
 };

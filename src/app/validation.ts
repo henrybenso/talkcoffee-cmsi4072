@@ -47,7 +47,7 @@ export const schema = z.object({
             (files) => ACCEPTED_IMAGE_TYPES.includes(files?.[0]?.type),
             ".jpg, .jpeg, .png and .gif files are accepted."
         ),
-    images: z.any().refine((files) => files?.length == 5, "Minimum 5 required.")
+    images: z.any().refine((files) => files?.length >= 5, "Minimum 5 required.")
         .refine((files) => files?.[0]?.size <= MAX_FILE_SIZE, `Max file size is 5MB.`)
         .refine(
             (files) => ACCEPTED_IMAGE_TYPES.includes(files?.[0]?.type),

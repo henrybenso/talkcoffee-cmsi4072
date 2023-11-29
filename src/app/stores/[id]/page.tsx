@@ -1,27 +1,13 @@
-// import Head from "next/head";
-// import Layout from "../../layout";
-// import Headerinfo from "../headerinfo";
-// import ImageScroller from "../imageScroller";
-// import { buttonVariants } from "@/components/ui/button";
-// import Link from "next/link";
-// import Image from "next/image";
+import { PrismaStoreType } from "@/app/types";
 
-// export default function Page({ store }) {
-//   return (
-//     <Layout>
-//       <>
-//         <Image></Image>
-//         <div>
-//           <Link
-//             href="/stores/create"
-//             className={buttonVariants({ variant: "outline" })}
-//           >
-//             Add a store
-//           </Link>
-//         </div>
-//         <div>Google Rating:</div>
-//         <div>Talk Coffee Rating:</div>
-//       </>
-//     </Layout>
-//   );
-// }
+export default function Page({
+  params,
+}: {
+  params: { store: PrismaStoreType };
+}) {
+  return (
+    <div>
+      <h1>hello</h1>
+    </div>
+  );
+}
