@@ -6,7 +6,7 @@ import Searchbar from "./searchbar";
 import { Suspense } from "react";
 import { Button } from "@/components/ui/button";
 import { buttonVariants } from "@/components/ui/button";
-import Results from "./results";
+import Results from "./result";
 
 export default async function Home({
   searchParams,

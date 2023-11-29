@@ -38,10 +38,12 @@ export async function GET(
                 mode: "insensitive", // Case-insensitive search
             },
         },
-        // select: {
-        //     id: true,
-        //     name: true,
-        // }
+        select: {
+            id: true,
+            name: true,
+            averageRating: true,
+            avatar: true
+        }
     });
 
     // res.status(200).json({ result })

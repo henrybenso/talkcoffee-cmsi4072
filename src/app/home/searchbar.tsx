@@ -3,12 +3,16 @@ import Link from "next/link";
 import { useState } from "react";
 import { useSearchParams, usePathname, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import Result from "./result";
+import Suggestion from "./suggestion";
+import { PrismaStoreType } from "../types";
 
 export default function Search() {
-  const [suggestionsState, setSuggestionState] = useState([]);
-  const [resultState, setResultState] = useState([]);
+  const [suggestionState, setSuggestionState] = useState([]);
+  const [resultState, setResultState] = useState<PrismaStoreType[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [showButtons, setShowButtons] = useState(false);
   // const [showButtons, setShowButtons] = useState(false);
   const searchParams = useSearchParams();
   const pathname = usePathname();
@@ -30,7 +34,7 @@ export default function Search() {
 
   function onSubmit() {
     setShowSuggestions(false);
-    // setShowButtons(true);
+    setShowButtons(true);
 
     fetchFilteredStores(searchTerm);
     // setShowButtons(true);
@@ -60,8 +64,20 @@ export default function Search() {
     return data;
   }
 
+  const suggestionList = Object.keys(suggestionState).map((store) => (
+    <li key={suggestionState[store].name} className="">
+      <Suggestion store={suggestionState[store]} />
+    </li>
+  ));
+
+  const storesList = Object.keys(resultState).map((store) => (
+    <li key={resultState[store].name} className="">
+      <Result store={resultState[store]} />
+    </li>
+  ));
+
   return (
-    <div>
+    <div className="">
       {/* <form onSubmit={onSubmit}> */}
       <div className="relative flex flex-1 flex-shrink-0">
         <label htmlFor="search" className="sr-only">
@@ -84,32 +100,19 @@ export default function Search() {
       </div>
       {/* </form> */}
       <div className="pb-2"></div>
-      <div>
+      <div className="">
         {showSuggestions && (
-          <ul className="w-full">
-            {Object.keys(suggestionsState).map((store) => (
-              <Link href={`stores/${suggestionsState[store].id}`}>
-                <li
-                  key={suggestionsState[store].id}
-                  className="text-sm pl-10 p-3 peer block w-full rounded-md border border-yellow-800 py-[9px] outline-2"
-                >
-                  {suggestionsState[store].name}
-                </li>
-              </Link>
-            ))}
-          </ul>
+          <ol className=" overflow-y-scroll h-100 max-h-full bg-white suggestionsList">
+            {suggestionList}
+          </ol>
         )}
       </div>
       <div className="pb-10"></div>
       <div>
-        {!showSuggestions && (
-          <ul className="w-full">
-            {Object.keys(resultState).map((store) => (
-              <li key={resultState[store].id} className="">
-                {resultState[store].name}
-              </li>
-            ))}
-          </ul>
+        {showButtons && (
+          <ol className="overflow-y-scroll max-h-fit bg-white storesList">
+            {storesList}
+          </ol>
         )}
       </div>
     </div>

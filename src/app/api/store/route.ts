@@ -6,13 +6,14 @@ import { schemaStoreBackend } from "@/app/validation"
 
 import moment from "../../../utils/moment-timezone"
 
-cloudinary.config(process.env.CLOUDINARY_URL || '');
+// cloudinary.config(process.env.CLOUDINARY_URL || '');
 
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-};
+// export const config = {
+//   api: {
+//     bodyParser: false,
+//   },
+// };
+
 
 interface Days {
   sunday: "SUN",
@@ -112,12 +113,28 @@ export async function GET(request: Request) {
       name: {
         contains: query
       }
+    },
+    include: {
+      avatar: true,
+      images: true,
+      serviceTypes: true,
+      serviceHours: true
     }
   });
+  console.log(result)
   return NextResponse.json({ result });
 }
 
 export async function POST(request: NextRequest) {
+
+  // const cloudinary = require('cloudinary')
+
+  cloudinary.config({
+    cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.API_KEY,
+    api_secret: process.env.API_SECRET,
+    secure: true,
+  })
 
   const formData = await request.formData()
   const storeFlat = formData.get("store")
@@ -216,6 +233,7 @@ export async function POST(request: NextRequest) {
       const imageFilePath = `public/images/uploads/${imageFileName}`
       const imageBuffer = Buffer.from(await imageFileBlob.arrayBuffer());
       fs.writeFileSync(imageFilePath, imageBuffer)
+      // const imagesImageData = await cloudinary.uploader.upload(imageFilePath)
       const imagesImageData = await cloudinary.uploader.upload(imageFilePath)
       prismaImagesArr.push({ publicId: imagesImageData.public_id, format: imagesImageData.format, version: imagesImageData.version.toString() })
     })
