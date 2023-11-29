@@ -30,7 +30,7 @@ export async function GET(
         throw new Error("Invalid request")
     }
 
-    // console.log(query)
+    console.log(query)
     const result = await prisma.store.findMany({
         where: {
             name: {
@@ -38,15 +38,15 @@ export async function GET(
                 mode: "insensitive", // Case-insensitive search
             },
         },
-        select: {
-            id: true,
-            name: true,
-        }
+        // select: {
+        //     id: true,
+        //     name: true,
+        // }
     });
 
     // res.status(200).json({ result })
     // console.log(result)
-    return NextResponse.json(
+    return Response.json(
         result
     )
 }

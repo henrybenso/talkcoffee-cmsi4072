@@ -105,17 +105,17 @@ type ServiceHoursType = {
 //   return NextResponse.json({ result });
 // }
 
-// export async function GET(request: Request) {
-//   const query = req. 
-//   const result = await prisma.store.findMany({
-//     where: {
-//       name: {
-//         contains
-//       }
-//     }
-//   });
-//   return NextResponse.json({ result });
-// }
+export async function GET(request: Request) {
+  const query = await request.json()
+  const result = await prisma.store.findMany({
+    where: {
+      name: {
+        contains: query
+      }
+    }
+  });
+  return NextResponse.json({ result });
+}
 
 export async function POST(request: NextRequest) {
 
@@ -274,7 +274,7 @@ export async function POST(request: NextRequest) {
     }
   })
 
-  return NextResponse.json({
+  return Response.json({
     result,
   });
 }

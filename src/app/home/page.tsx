@@ -6,6 +6,7 @@ import Searchbar from "./searchbar";
 import { Suspense } from "react";
 import { Button } from "@/components/ui/button";
 import { buttonVariants } from "@/components/ui/button";
+import Results from "./results";
 
 export default async function Home({
   searchParams,
@@ -56,6 +57,7 @@ export default async function Home({
             {/* <Suspense key={query} fallback={<Hearts />}>
               <Suggestions query={query} />
             </Suspense> */}
+            {/* <Results params={query, } /> */}
           </div>
         </h2>
       </>
