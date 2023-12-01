@@ -23,7 +23,7 @@ export default async function Home({
     <Layout>
       <>
         <section className="">
-          <div className="absolute top-0 right-0">
+          {/* <div className="absolute top-0 right-0">
             <Link
               href="/signin"
               className={buttonVariants({ variant: "outline" })}
@@ -36,15 +36,15 @@ export default async function Home({
             >
               Sign up
             </Link>
-          </div>
+          </div> */}
         </section>
         <section className="">
-          <Link
-            href="/stores"
+          {/* <Link
+            href="/store"
             className={buttonVariants({ variant: "outline" })}
           >
             Stores
-          </Link>
+          </Link> */}
         </section>
         <h1 className="p-5 shrink-0 flex place-content-center">
           <div className="text-5xl font-bold text-yellow-900">TalkCoffee</div>

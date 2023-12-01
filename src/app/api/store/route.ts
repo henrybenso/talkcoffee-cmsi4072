@@ -106,28 +106,7 @@ type ServiceHoursType = {
 //   return NextResponse.json({ result });
 // }
 
-export async function GET(request: Request) {
-  const query = await request.json()
-  const result = await prisma.store.findMany({
-    where: {
-      name: {
-        contains: query
-      }
-    },
-    include: {
-      avatar: true,
-      images: true,
-      serviceTypes: true,
-      serviceHours: true
-    }
-  });
-  console.log(result)
-  return NextResponse.json({ result });
-}
-
 export async function POST(request: NextRequest) {
-
-  // const cloudinary = require('cloudinary')
 
   cloudinary.config({
     cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
@@ -146,9 +125,9 @@ export async function POST(request: NextRequest) {
   const filePath = `public/images/uploads/${fileName}`
 
   const imageOne = formData.get("imageOne"); const imageTwo = formData.get("imageTwo"); const imageThree = formData.get("imageThree"); const imageFour = formData.get("imageFour"); const imageFive = formData.get("imageFive")
-  console.log(imageOne)
-  console.log(imageTwo)
-  console.log(imageFive)
+  // console.log(imageOne)
+  // console.log(imageTwo)
+  // console.log(imageFive)
 
   const imagesArr = [
     imageOne, imageTwo, imageThree, imageFour, imageFive
@@ -166,7 +145,7 @@ export async function POST(request: NextRequest) {
   });
 
   if (!parse.success) {
-    return { message: 'Failed to create Store' }
+    return NextResponse.json({ error: 'Failed to create Store' }, { status: 500 })
   }
 
   if (!file) {
@@ -192,7 +171,7 @@ export async function POST(request: NextRequest) {
   const ratingCount = 1
   const sitIn = storeData.serviceTypes.sitIn
 
-  const keys = Object.keys(storeData.serviceHours)
+  // const keys = Object.keys(storeData.serviceHours)
   const sitInArr: DineTypes[] = [], serviceHoursArr: { day: Days, open: string, close: string }[] = []
   let date = new Date()
   let dateToText = date.toISOString()
@@ -202,44 +181,82 @@ export async function POST(request: NextRequest) {
     sitInArr.push(obj.value)
   })
 
-  keys.forEach(key => {
-    let currentDay = storeData.serviceHours[key as keyof ServiceHoursType]
-    if (currentDay.open !== "" && currentDay.open !== "") {
-      currentDay.day = (Days as Days)[key]
-
-      let formattedCloseDate = currentDate.concat(" ", currentDay.close)
-      let convertedCloseDate = moment.tz(formattedCloseDate, timezone)
-      currentDay.close = convertedCloseDate.utc().format()
-
-      let formattedOpenDate = currentDate.concat(" ", currentDay.open)
-      let convertedOpenDate = moment.tz(formattedOpenDate, timezone)
-      currentDay.open = convertedOpenDate.utc().format()
-
-      // console.log(convertedCloseDate)
-      serviceHoursArr.push(currentDay)
+  const arr = Object.keys(storeData.serviceHours).forEach((key) => {
+    if (storeData.serviceHours[key].open === "" || storeData.serviceHours[key].close === "") {
+      delete storeData.serviceHours[key]
     }
   })
+
+  console.log(storeData.serviceHours)
+
+  const keys = Object.keys(storeData.serviceHours)
+
+  // async function formatDateTime (dateTime:string, timezone: string) {
+  //   const convertedDate = await moment.tz(dateTime, timezone)
+  //   return convertedDate
+  // }
+
+  // Object.entries(storeData.serviceHours).map((day) => {
+  //   if (day[0] !== "" || day[1] !== "") {
+
+  //   }
+  // })
+  // keys.forEach((key) => {
+
+  //   let currentDay = storeData.serviceHours[key as keyof ServiceHoursType]
+  //   if (currentDay.open !== "" && currentDay.open !== "") {
+  //     currentDay.day = (Days as Days)[key]
+
+  //     let formattedCloseDate = currentDate.concat(" ", currentDay.close)
+  //     let convertedCloseDate = formatDateTime(formattedCloseDate, timezone)
+  //     currentDay.close = convertedCloseDate.utc().format()
+
+  //     let formattedOpenDate = currentDate.concat(" ", currentDay.open)
+  //     let convertedOpenDate = await moment.tz(formattedOpenDate, timezone)
+  //     currentDay.open = convertedOpenDate.utc().format()
+
+  //     console.log(currentDay.close)
+  //     serviceHoursArr.push(currentDay)
+  //   }
+  // })
+
+  const serviceHoursPromise = await Promise.all(keys.map(async (key) => {
+    let currentDay = storeData.serviceHours[key as keyof ServiceHoursType]
+    currentDay.day = (Days as Days)[key]
+
+    let formattedCloseDate = currentDate.concat(" ", currentDay.close)
+    let convertedCloseDate = await moment.tz(formattedCloseDate, timezone)
+    currentDay.close = convertedCloseDate.utc().format()
+
+    let formattedOpenDate = currentDate.concat(" ", currentDay.open)
+    let convertedOpenDate = await moment.tz(formattedOpenDate, timezone)
+    currentDay.open = convertedOpenDate.utc().format()
+
+    // console.log(currentDay.close)
+    // serviceHoursArr.push(currentDay)
+    return currentDay
+  }))
+
+  console.log(serviceHoursPromise)
 
   fs.writeFileSync(filePath, buffer)
   const imageData = await cloudinary.uploader.upload(filePath)
   fs.unlinkSync(filePath)
 
-  const prismaImagesArr: { publicId: string, format: string, version: string }[] = []
-
-  const imagesPromise = function (x) {
-    x.map(async (image) => {
+  const imagesPromise = await Promise.all(
+    imagesArr.map(async (image) => {
       const imageFileName = (image as File).name;
       const imageFileBlob = image as Blob
       const imageFilePath = `public/images/uploads/${imageFileName}`
       const imageBuffer = Buffer.from(await imageFileBlob.arrayBuffer());
       fs.writeFileSync(imageFilePath, imageBuffer)
-      // const imagesImageData = await cloudinary.uploader.upload(imageFilePath)
       const imagesImageData = await cloudinary.uploader.upload(imageFilePath)
-      prismaImagesArr.push({ publicId: imagesImageData.public_id, format: imagesImageData.format, version: imagesImageData.version.toString() })
+      fs.unlinkSync(imageFilePath)
+      return { "publicId": imagesImageData.public_id, "format": imagesImageData.format, "version": imagesImageData.version.toString() }
     })
-  }
+  )
 
-  imagesPromise(imagesArr)
+  // console.log(imagesPromise)
 
   const store = {
     name: storeData.name,
@@ -252,15 +269,17 @@ export async function POST(request: NextRequest) {
       format: imageData.format,
       version: imageData.version.toString(),
     },
+    images: imagesPromise,
     serviceTypes: {
       sitIn: sitInArr,
       takeOut: storeData.serviceTypes.takeOut.value,
       delivery: storeData.serviceTypes.delivery.value,
       curbsidePickup: storeData.serviceTypes.curbsidePickup.value
     },
+    serviceHours: serviceHoursPromise
   }
 
-  const name = store.name, phoneNumber = store.phoneNumber, instagramHandle = store.instagramHandle, avatarPublicId = store.avatar.publicId, avatarFormat = store.avatar.format, avatarVersion = store.avatar.version, serviceTypesSitIn = store.serviceTypes.sitIn, serviceTypesTakeOut = store.serviceTypes.takeOut, serviceTypesDelivery = store.serviceTypes.delivery, serviceTypesCurbsidePickup = store.serviceTypes.curbsidePickup, serviceHours = store.serviceHours
+  const name = store.name, phoneNumber = store.phoneNumber, instagramHandle = store.instagramHandle, avatarPublicId = store.avatar.publicId, avatarFormat = store.avatar.format, avatarVersion = store.avatar.version, images = store.images, serviceTypesSitIn = store.serviceTypes.sitIn, serviceTypesTakeOut = store.serviceTypes.takeOut, serviceTypesDelivery = store.serviceTypes.delivery, serviceTypesCurbsidePickup = store.serviceTypes.curbsidePickup, serviceHours = store.serviceHours
   const result = await prisma.store.create({
     data: {
       name,
@@ -275,6 +294,13 @@ export async function POST(request: NextRequest) {
           version: avatarVersion
         }
       },
+      images: {
+        createMany: {
+          data:
+            images
+
+        }
+      },
       serviceTypes: {
         create: {
           sitIn: serviceTypesSitIn,
@@ -286,7 +312,8 @@ export async function POST(request: NextRequest) {
       serviceHours: {
         createMany: {
           data:
-            prismaImagesArr
+            serviceHours
+
         }
       }
     }

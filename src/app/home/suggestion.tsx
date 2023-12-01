@@ -16,7 +16,7 @@ const Suggestion = ({
   return (
     <div className="">
       {/* <h1>Your Search Results: for {stores.query}</h1> */}
-      <Link href={`stores/${store.id}`}>
+      <Link href={`/store/${store.id}`}>
         <div className="flex items-center text-sm pl-5 p-3 w-full rounded-md border border-yellow-800 py-[9px] outline-2">
           <div className="pr-2">
             <div className="relative mx-auto rounded-full overflow-hidden">
