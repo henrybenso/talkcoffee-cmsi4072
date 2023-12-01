@@ -26,6 +26,17 @@
 //                     version: "test_publicId",
 //                 },
 //             },
+//             images: {
+//                 create: [{
+//                     publicId: "bananaa",
+//                     format: "banana",
+//                     version: "banana"
+//                 }, {
+//                     publicId: "banana",
+//                     format: "banana",
+//                     version: "banana"
+//                 }]
+//             },
 //             serviceTypes: {
 //                 create: {
 //                     sitIn: [DineTypes.CAFE, DineTypes.BAR],
@@ -70,35 +81,35 @@
 
 
 
-// // const result = await prisma.store.create({
-// //     data: {
-// //         name,
-// //         averageRating,
-// //         ratingCount,
-// //         phoneNumber,
-// //         instagramHandle,
-// //         avatar,
-// //         // images: {
-// //         //   createMany: {
-// //         //     data: imageDatas,
-// //         //     skipDuplicates: true,
-// //         //   },
-// //         // },
-// //         serviceTypes: {
-// //             create: {
-// //                 sitIn: {
-// //                     sitInValues
-// //                 },
-// //                 takeOut: serviceTypes.takeOut,
-// //                 delivery: serviceTypes.delivery,
-// //             },
-// //         },
-// //         serviceHours: {
-// //             createMany: {
-// //                 data:
-// //                     newServiceHours
+// // // const result = await prisma.store.create({
+// // //     data: {
+// // //         name,
+// // //         averageRating,
+// // //         ratingCount,
+// // //         phoneNumber,
+// // //         instagramHandle,
+// // //         avatar,
+// // //         // images: {
+// // //         //   createMany: {
+// // //         //     data: imageDatas,
+// // //         //     skipDuplicates: true,
+// // //         //   },
+// // //         // },
+// // //         serviceTypes: {
+// // //             create: {
+// // //                 sitIn: {
+// // //                     sitInValues
+// // //                 },
+// // //                 takeOut: serviceTypes.takeOut,
+// // //                 delivery: serviceTypes.delivery,
+// // //             },
+// // //         },
+// // //         serviceHours: {
+// // //             createMany: {
+// // //                 data:
+// // //                     newServiceHours
 
-// //             }
-// //         },
-// //     },
-// // });
+// // //             }
+// // //         },
+// // //     },
+// // // });

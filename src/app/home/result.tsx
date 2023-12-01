@@ -20,7 +20,7 @@ const Result = ({
   // });
   return (
     <div>
-      <Link href={`stores/${store.id}`}>
+      <Link href={`/store/${store.id}`}>
         <div className="flex items-center text-sm pl-5 p-3 border border-x-amber-700 hover:border-amber-800">
           {/* <h1>Your Search Results: for {stores.query}</h1> */}
           <div className="pr-2">
