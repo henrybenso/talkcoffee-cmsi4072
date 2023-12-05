@@ -210,3 +210,8 @@
 	opacity: 1;
 	color: var(--PhoneInputCountrySelectArrow-color--focus);
 }
+
+.map-container {
+	height: 600px;
+  }
+  

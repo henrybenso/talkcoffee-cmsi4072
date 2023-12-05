@@ -102,7 +102,7 @@ export default function Search() {
       <div className="pb-2"></div>
       <div className="">
         {showSuggestions && (
-          <ol className=" overflow-y-scroll h-100 max-h-full bg-white suggestionsList">
+          <ol className=" overflow-y-auto h-80 max-h-full bg-white suggestionsList">
             {suggestionList}
           </ol>
         )}
