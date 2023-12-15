@@ -40,7 +40,7 @@ export const schema = z.object({
         })
     ),
     // phoneNumber: z.string().regex(new RegExp("^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]\d{3}[\s.-]\d{4}$")),
-    instagramHandle: z.string().optional(),
+    instagramHandle: z.string(),
     avatar: z.any().refine((files) => files?.length == 1, "Image is required.")
         .refine((files) => files?.[0]?.size <= MAX_FILE_SIZE, `Max file size is 5MB.`)
         .refine(

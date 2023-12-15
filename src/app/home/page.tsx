@@ -1,25 +1,10 @@
-import Image from "next/image";
-import styles from "./page.module.css";
 import Link from "next/link";
 import Layout from "../../app/layout";
 import Searchbar from "./searchbar";
 import { Suspense } from "react";
-import { Button } from "@/components/ui/button";
 import { buttonVariants } from "@/components/ui/button";
-import Results from "./result";
-import MapContainer from "./mapContainer";
 
-export default async function Home({
-  searchParams,
-}: {
-  searchParams?: {
-    query?: string;
-    // page?: string;
-  };
-}) {
-  const query = searchParams?.query || "";
-  // const currentPage = Number(searchParams?.page) || 1;
-
+export default async function Home() {
   return (
     <Layout>
       <>
@@ -41,10 +26,10 @@ export default async function Home({
         </section>
         <section className="">
           <Link
-            href="/store"
+            href="/store/create"
             className={buttonVariants({ variant: "outline" })}
           >
-            Stores
+            Add a Store
           </Link>
         </section>
         <section>
@@ -58,11 +43,6 @@ export default async function Home({
             <div className="pr-4 pt-4 pl-4">
               <Searchbar />
             </div>
-            {/* <div className="pr-4 pb-4 pl-4"> */}
-            <div className="w-full">
-              <MapContainer />
-            </div>
-            {/* </div> */}
           </h2>
         </section>
       </>
