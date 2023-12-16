@@ -33,7 +33,7 @@ CREATE TABLE "Store" (
     "averageRating" DOUBLE PRECISION NOT NULL,
     "ratingCount" INTEGER NOT NULL,
     "phoneNumber" TEXT,
-    "instagramHandle" TEXT,
+    "instagramHandle" TEXT NOT NULL,
     "avatarImageId" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,

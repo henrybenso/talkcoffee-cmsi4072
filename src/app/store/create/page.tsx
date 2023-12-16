@@ -195,17 +195,11 @@ export default function CreateStore() {
         <Link href="/" className={buttonVariants({ variant: "outline" })}>
           Back
         </Link>
-        <Link
-          href="/stores/create/add-image"
-          className={buttonVariants({ variant: "outline" })}
-        >
-          image upload button
-        </Link>
         <div className="grid place-content-center">
           <section>
             <div>
               Are you are store owner? If so,
-              <Link className="ml-2" href="/stores/create-by-owner">
+              <Link className="ml-2" href="/store/create-by-owner">
                 <Button>Click Here!</Button>
               </Link>
             </div>
@@ -314,9 +308,9 @@ export default function CreateStore() {
               />
             </div>
             <Button type="submit">Submit</Button>
-            <button type="button" onClick={handleGetValues}>
+            {/* <button type="button" onClick={handleGetValues}>
               Get values
-            </button>
+            </button> */}
           </form>
         </div>
       </Layout>

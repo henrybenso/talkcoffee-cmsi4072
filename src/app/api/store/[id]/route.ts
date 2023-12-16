@@ -2,11 +2,10 @@ import { prisma } from "../../../../../db"
 
 export async function GET(request: Request, { params }: { params: { id: string } }) {
     const id = params.id
-    const result = await prisma.store.findMany({
+    const result = await prisma.store.findUnique({
         where: {
-            id: {
-                contains: id
-            }
+            id: id
+
         },
         include: {
             avatar: true,
@@ -15,6 +14,6 @@ export async function GET(request: Request, { params }: { params: { id: string }
             serviceHours: true
         }
     });
-    console.log(result)
-    return Response.json({ result });
+    // console.log(result)
+    return Response.json(result);
 }

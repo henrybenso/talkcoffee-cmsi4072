@@ -109,7 +109,7 @@ export type PrismaStoreType = {
     averageRating: number
     ratingCount: number;
     phoneNumber: string;
-    instagramHandle: string | undefined;
+    instagramHandle: string;
     avatar: AvatarType;
     images: [ImageType]
     serviceTypes: ServiceTypesType;

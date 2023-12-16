@@ -125,14 +125,10 @@ export async function POST(request: NextRequest) {
   const filePath = `public/images/uploads/${fileName}`
 
   const imageOne = formData.get("imageOne"); const imageTwo = formData.get("imageTwo"); const imageThree = formData.get("imageThree"); const imageFour = formData.get("imageFour"); const imageFive = formData.get("imageFive")
-  // console.log(imageOne)
-  // console.log(imageTwo)
-  // console.log(imageFive)
 
   const imagesArr = [
     imageOne, imageTwo, imageThree, imageFour, imageFive
   ]
-
 
   const parse = schemaStoreBackend.safeParse({
     name: storeObj["name"],
@@ -165,14 +161,11 @@ export async function POST(request: NextRequest) {
 
   const buffer = Buffer.from(await fileBlob.arrayBuffer());
   const storeData = parse.data
-
   const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
   const averageRating = parseInt(storeData.rating)
   const ratingCount = 1
   const sitIn = storeData.serviceTypes.sitIn
-
-  // const keys = Object.keys(storeData.serviceHours)
-  const sitInArr: DineTypes[] = [], serviceHoursArr: { day: Days, open: string, close: string }[] = []
+  const sitInArr: DineTypes[] = []
   let date = new Date()
   let dateToText = date.toISOString()
   let currentDate: string = dateToText.slice(0, 10)
@@ -187,57 +180,20 @@ export async function POST(request: NextRequest) {
     }
   })
 
-  console.log(storeData.serviceHours)
-
   const keys = Object.keys(storeData.serviceHours)
-
-  // async function formatDateTime (dateTime:string, timezone: string) {
-  //   const convertedDate = await moment.tz(dateTime, timezone)
-  //   return convertedDate
-  // }
-
-  // Object.entries(storeData.serviceHours).map((day) => {
-  //   if (day[0] !== "" || day[1] !== "") {
-
-  //   }
-  // })
-  // keys.forEach((key) => {
-
-  //   let currentDay = storeData.serviceHours[key as keyof ServiceHoursType]
-  //   if (currentDay.open !== "" && currentDay.open !== "") {
-  //     currentDay.day = (Days as Days)[key]
-
-  //     let formattedCloseDate = currentDate.concat(" ", currentDay.close)
-  //     let convertedCloseDate = formatDateTime(formattedCloseDate, timezone)
-  //     currentDay.close = convertedCloseDate.utc().format()
-
-  //     let formattedOpenDate = currentDate.concat(" ", currentDay.open)
-  //     let convertedOpenDate = await moment.tz(formattedOpenDate, timezone)
-  //     currentDay.open = convertedOpenDate.utc().format()
-
-  //     console.log(currentDay.close)
-  //     serviceHoursArr.push(currentDay)
-  //   }
-  // })
 
   const serviceHoursPromise = await Promise.all(keys.map(async (key) => {
     let currentDay = storeData.serviceHours[key as keyof ServiceHoursType]
     currentDay.day = (Days as Days)[key]
-
     let formattedCloseDate = currentDate.concat(" ", currentDay.close)
     let convertedCloseDate = await moment.tz(formattedCloseDate, timezone)
     currentDay.close = convertedCloseDate.utc().format()
-
     let formattedOpenDate = currentDate.concat(" ", currentDay.open)
     let convertedOpenDate = await moment.tz(formattedOpenDate, timezone)
     currentDay.open = convertedOpenDate.utc().format()
 
-    // console.log(currentDay.close)
-    // serviceHoursArr.push(currentDay)
     return currentDay
   }))
-
-  console.log(serviceHoursPromise)
 
   fs.writeFileSync(filePath, buffer)
   const imageData = await cloudinary.uploader.upload(filePath)
@@ -255,8 +211,6 @@ export async function POST(request: NextRequest) {
       return { "publicId": imagesImageData.public_id, "format": imagesImageData.format, "version": imagesImageData.version.toString() }
     })
   )
-
-  // console.log(imagesPromise)
 
   const store = {
     name: storeData.name,

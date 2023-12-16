@@ -34,7 +34,7 @@ model Store {
   averageRating   Float
   ratingCount     Int
   phoneNumber     String?
-  instagramHandle String?
+  instagramHandle String
   avatar          AvatarImage    @relation(fields: [avatarImageId], references: [id])
   avatarImageId   String         @unique
   images          Image[]

@@ -1,29 +1,15 @@
-import Image from "next/image";
-import styles from "./page.module.css";
 import Link from "next/link";
 import Layout from "../../app/layout";
 import Searchbar from "./searchbar";
 import { Suspense } from "react";
-import { Button } from "@/components/ui/button";
 import { buttonVariants } from "@/components/ui/button";
-import Results from "./result";
 
-export default async function Home({
-  searchParams,
-}: {
-  searchParams?: {
-    query?: string;
-    // page?: string;
-  };
-}) {
-  const query = searchParams?.query || "";
-  // const currentPage = Number(searchParams?.page) || 1;
-
+export default async function Home() {
   return (
     <Layout>
       <>
         <section className="">
-          {/* <div className="absolute top-0 right-0">
+          <div className="absolute top-0 right-0">
             <Link
               href="/signin"
               className={buttonVariants({ variant: "outline" })}
@@ -36,30 +22,29 @@ export default async function Home({
             >
               Sign up
             </Link>
-          </div> */}
+          </div>
         </section>
         <section className="">
-          {/* <Link
-            href="/store"
+          <Link
+            href="/store/create"
             className={buttonVariants({ variant: "outline" })}
           >
-            Stores
-          </Link> */}
+            Add a Store
+          </Link>
         </section>
-        <h1 className="p-5 shrink-0 flex place-content-center">
-          <div className="text-5xl font-bold text-yellow-900">TalkCoffee</div>
-        </h1>
-        <h2 className="">
-          <div className="pr-4 pt-4 pl-4">
-            <Searchbar />
-          </div>
-          <div className="pr-4 pb-4 pl-4">
-            {/* <Suspense key={query} fallback={<Hearts />}>
-              <Suggestions query={query} />
-            </Suspense> */}
-            {/* <Results params={query, } /> */}
-          </div>
-        </h2>
+        <section>
+          <h1 className="p-5 shrink-0 flex place-content-center">
+            <div className="text-5xl font-bold text-yellow-900">TalkCoffee</div>
+          </h1>
+        </section>
+
+        <section>
+          <h2 className="">
+            <div className="pr-4 pt-4 pl-4">
+              <Searchbar />
+            </div>
+          </h2>
+        </section>
       </>
     </Layout>
   );

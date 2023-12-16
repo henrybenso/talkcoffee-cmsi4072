@@ -1,185 +1,135 @@
-"use client";
+import dynamic from "next/dynamic";
+import Layout from "../../layout";
+import { Suspense } from "react";
+import { Instagram } from "lucide-react";
+export const dynamicParams = true;
 
-import { PrismaStoreType } from "@/app/types";
-import { usePathname } from "next/navigation";
-
-export default function Page({
-  params,
-}: {
-  params: { store: PrismaStoreType };
-}) {
-  async function generateStaticParams() {
-    const path = usePathname();
-    const res = await fetch(`http://localhost:3000/api${path}`, {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    const store = await res.json();
-    console.log(store);
-    console.log(path);
-  }
-  const test = generateStaticParams();
-
-  // console.log(test);
-  return (
-    <div>
-      <h1>hello</h1>
-    </div>
-  );
+enum Days {
+  SUN = "Sunday",
+  MON = "Monday",
+  TUE = "Tuesday",
+  WED = "Wednesday",
+  TR = "Thursday",
+  FRI = "Friday",
+  SAT = "Saturday",
 }
 
-// // "use client";
+async function getStore(id: string) {
+  const store = await fetch(`http://localhost:3000/api/store/${id}`, {
+    next: {
+      revalidate: 60,
+    },
+  }).then((res) => res.json());
 
-// // import { useEffect, useState } from 'react';
+  return store;
+}
 
-// // const ShopPage = () => {
-// //   const [shopId, setShopId] = useState<string | null>(null);
-// //   const [shopData, setShopData] = useState<any>(null);
+const AvatarImage = dynamic(() => import("./avatarImage"), {
+  ssr: false,
+});
 
-// //   useEffect(() => {
-// //     const fetchData = async () => {
-// //       try {
-// //         const response = await fetch(`/api/shop/${shopId}`);
-// //         const data = await response.json();
-// //         setShopData(data.result);
-// //       } catch (error) {
-// //         console.error('Error fetching shop data:', error);
-// //       }
-// //     };
+const ImageGallery = dynamic(() => import("./imageGallery"), {
+  ssr: false,
+});
 
-// //     if (shopId) {
-// //       fetchData();
-// //     }
-// //   }, [shopId]);
+export default async function Page({ params }) {
+  const store = await getStore(params.id);
+  const instagramUrl = `https://www.instagram.com/${store.instagramHandle}`;
 
-// //   if (!shopData) {
-// //     return <div>Loading...</div>;
-// //   }
+  // const serviceHoursLocal = store.serviceHours.map((serviceDay) => {
+  //   serviceDay.open =
+  // })
 
-// //   return (
-// //     <div>
-// //       <h1>{shopData.name || 'Loading...'}</h1>
-// //       <p>Rating: {shopData.averageRating || 'Loading...'}</p>
-// //       <p>Phone Number: {shopData.phoneNumber || 'Not available'}</p>
-// //       <p>Service Types: {shopData.serviceTypes?.join(', ') || 'Not available'}</p>
-// //       <p>Service Hours: {shopData.serviceHours || 'Not available'}</p>
+  console.log(store);
+  return (
+    <Layout>
+      <>
+        <div>
+          <div className="pr-6">
+            <div className="mx-auto overflow-hidden">
+              <div className="flex flex-row p-6">
+                <Suspense fallback={<p>Loading avatar image...</p>}>
+                  <AvatarImage
+                    params={{
+                      avatarId: store.avatar.publicId,
+                    }}
+                  />
+                </Suspense>
+                <div className="grid grid-cols-1 font-bold font-sans text-7xl content-center">
+                  {store.name}
+                  <div className="flex flex-row font-semibold p-1 font-sans text-xl">
+                    <div className="pr-1">
+                      <Instagram />
+                    </div>
+                    <div>
+                      <a href={instagramUrl} target="_blank">
+                        {store.instagramHandle}
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
 
-// //       <img src={shopData.avatar?.url} alt="Shop Avatar" /> {/* Adjust based on your actual data structure */}
+        <section className="font-semibold">
+          <div className="p-3">
+            <div>Rating: {store.averageRating}</div>
+            <div>Phone Number: {store.phoneNumber}</div>
+          </div>
+          <br />
+          <div className="p-3">
+            Seating Type:
+            {store.serviceTypes.sitIn.map((type, index) => (
+              <div key={index} className="pl-5">
+                {type}
+              </div>
+            ))}
+          </div>
+          <br />
+          <div className="p-3">
+            <div>Take out Options:</div>
+            <div className="pl-5">
+              <div>{store.serviceTypes.takeOut && <div>Order Pickup</div>}</div>
+              <div>{store.serviceTypes.delivery && <div>Delivery</div>}</div>
+              <div>
+                {store.serviceTypes.curbsidePickup && (
+                  <div>Curbside Pickup</div>
+                )}
+              </div>
+            </div>
+          </div>
+        </section>
 
-// //       <h2>Image Gallery</h2>
-// //       <div className="gallery">
-// //         {shopData.images?.map((image, index) => (
-// //           <img
-// //             key={index}
-// //             src={`https://res.cloudinary.com/${process.env.CLOUD_NAME}/v${image.version}/${image.publicId}.${image.format}`}
-// //             alt={`Shop Image ${index + 1}`}
-// //           />
-// //         ))}
-// //       </div>
-// //     </div>
-// //   );
-// // };
+        <section>
+          <div className="p-3">
+            <ol className="font-semibold">
+              Hours:
+              {store.serviceHours.map((serviceHour, index) => (
+                <li key={index} className="pl-5">
+                  <div>
+                    <div className="pr-2">{Days[serviceHour.day]}:</div>
+                    <div className="pl-5">
+                      <div>Open: {serviceHour.open}</div>
+                      <div>Close: {serviceHour.close}</div>
+                    </div>
+                  </div>
+                </li>
+              ))}
+            </ol>
+          </div>
+        </section>
 
-// // export default ShopPage;
-
-//////////////////////////////////////////////////////////////////////////////////////////////
-// ("use client");
-// import { useEffect, useState } from "react";
-// import Link from "next/link";
-
-// export default function ShopPage() {
-//   const [shopId, setShopId] = useState<string | null>(null);
-//   const [shopData, setShopData] = useState<any>(null);
-//   const data = {
-//     name: "Sample Shop",
-//     averageRating: 4.5,
-//     phoneNumber: "123-456-7890",
-//     serviceTypes: ["Cafe", "Bar"],
-//     serviceHours: "Mon-Fri 9:00 AM - 6:00 PM",
-//     avatar: { url: "https://placekitten.com/200/200" },
-//     images: [
-//       {
-//         publicId: "1",
-//         version: "1",
-//         format: "jpg",
-//         url: "https://placekitten.com/300/300",
-//       },
-//       {
-//         publicId: "2",
-//         version: "1",
-//         format: "jpg",
-//         url: "https://placekitten.com/300/301",
-//       },
-//       // Add more images as needed
-//     ],
-//   };
-//   return (
-//     <div className="shop-container">
-//       <h1>{shopData.name || "Loading..."}</h1>
-//       <p className="rating">Rating: {shopData.averageRating || "Loading..."}</p>
-//       <p>Phone Number: {shopData.phoneNumber || "Not available"}</p>
-//       <p>
-//         Service Types: {shopData.serviceTypes?.join(", ") || "Not available"}
-//       </p>
-//       <p>Service Hours: {shopData.serviceHours || "Not available"}</p>
-
-//       <img className="avatar" src={shopData.avatar?.url} alt="Shop Avatar" />
-
-//       <h2>Image Gallery</h2>
-//       <div className="gallery">
-//         {shopData.images?.map((image, index) => (
-//           <img key={index} src={image.url} alt={`Shop Image ${index + 1}`} />
-//         ))}
-//       </div>
-
-//       {/* Add other shop information here */}
-
-//       {/* Link to the shop details page */}
-//       <Link href={`/stores/${shopId}`}>
-//         <a className="details-link">View Details</a>
-//       </Link>
-
-//       <style jsx>{`
-//         .shop-container {
-//           max-width: 600px;
-//           margin: 0 auto;
-//           padding: 20px;
-//         }
-//         .loading {
-//           text-align: center;
-//         }
-//         .rating {
-//           font-weight: bold;
-//         }
-//         .avatar {
-//           width: 100%;
-//           max-width: 300px;
-//           margin-top: 20px;
-//         }
-//         .gallery {
-//           display: flex;
-//           flex-wrap: wrap;
-//           margin-top: 20px;
-//         }
-//         .gallery img {
-//           width: 100%;
-//           max-width: 200px;
-//           margin: 0 10px 10px 0;
-//         }
-//         .details-link {
-//           display: inline-block;
-//           margin-top: 20px;
-//           padding: 10px;
-//           background-color: #0070f3;
-//           color: white;
-//           text-decoration: none;
-//           border-radius: 5px;
-//         }
-//         .details-link:hover {
-//           background-color: #0056b3;
-//         }
-//       `}</style>
-//     </div>
-//   );
-// }
+        <div>
+          <div className="p-3 flex font-bold font-sans text-5xl">Gallery</div>
+          <div className="">
+            <Suspense fallback={<p>Loading image gallery...</p>}>
+              <ImageGallery params={store.images} />
+            </Suspense>
+          </div>
+        </div>
+      </>
+    </Layout>
+  );
+}

@@ -11,7 +11,7 @@ import { buttonVariants } from "@/components/ui/button";
 import { Controller, useForm } from "react-hook-form";
 import { useState } from "react";
 import Select from "react-select";
-import { VALUES, schema } from "@/app/validation";
+import { schema } from "@/app/validation";
 
 interface Days {
   sunday: "SUN";
@@ -96,39 +96,8 @@ export default function CreateStore() {
     },
   });
 
-  // const [imageUploaded, setImageUploaded] = useState();
-  // const [uploadedFiles, setUploadedFiles] = useState();
   const [fileLimit, setFileLimit] = useState(false);
   const selectUniqueId = Date.now().toString();
-
-  // const handleChange = (event) => {
-  //   setImageUploaded(event.target.files[0]);
-  //   console.log(imageUploaded);
-  // };
-
-  // const handleUploadFiles = (files) => {
-  //   const uploaded = [...uploadedFiles];
-  //   let limitExceeded = false;
-  //   files.some((file) => {
-  //     if (uploaded.findIndex((f) => f.name === file.name) === -1) {
-  //       uploaded.push(file);
-  //       if (uploaded.length == MAX_COUNT) setFileLimit(true);
-  //       if (uploaded.length > MAX_COUNT) {
-  //         alert("You can only add a maximum of ${MAX_COUNT} files");
-  //         setFileLimit(false);
-  //         limitExceeded = true;
-  //       }
-  //     }
-  //   });
-
-  //   if (!limitExceeded) setUploadedFiles(uploaded);
-  // };
-
-  // const handleFileEvent = (e) => {
-  //   const chosenFiles = Array.prototype.slice.call(e.target.files[0]);
-  //   // console.log(chosenFiles);
-  //   // handleUploadFiles(chosenFiles);
-  // };
 
   const handleGetValues = () => {
     console.log("Get Values", getValues());
@@ -140,9 +109,6 @@ export default function CreateStore() {
   };
 
   async function submitForm(values: z.infer<typeof schema>) {
-    // if (!imageUploaded) {
-    //   return;
-    // }
     const {
       name,
       rating,
@@ -162,16 +128,12 @@ export default function CreateStore() {
     formData.append("imageThree", images[2]);
     formData.append("imageFour", images[3]);
     formData.append("imageFive", images[4]);
-    // values = { ...values, avatar: avatar[0].name };
     formData.append("store", JSON.stringify(values));
 
-    // console.log(formData.values());
-    // for (const value of formData.values()) [console.log(value)];
     const res = await fetch("http://localhost:3000/api/store", {
       method: "POST",
       body: formData,
     });
-    // console.log(res);
     const result = await res.json();
     console.log(result);
   }
